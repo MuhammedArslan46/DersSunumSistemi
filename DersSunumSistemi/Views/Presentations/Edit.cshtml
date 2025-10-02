@@ -1,0 +1,77 @@
+@model DersSunumSistemi.Models.Presentation
+
+@{
+    ViewData["Title"] = "Sunum Düzenle";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-warning text-dark">
+                    <h4 class="mb-0"><i class="bi bi-pencil"></i> Sunum Düzenle</h4>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Edit" method="post" enctype="multipart/form-data">
+                        <input type="hidden" asp-for="Id" />
+                        <input type="hidden" asp-for="FilePath" />
+                        <input type="hidden" asp-for="FileName" />
+                        <input type="hidden" asp-for="UploadDate" />
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="Title" class="form-label">Sunum Başlığı</label>
+                            <input asp-for="Title" class="form-control" />
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="CourseId" class="form-label">Ders</label>
+                            <select asp-for="CourseId" class="form-select" asp-items="ViewBag.Courses">
+                                <option value="">-- Ders Seçiniz --</option>
+                            </select>
+                            <span asp-validation-for="CourseId" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label">Açıklama</label>
+                            <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+
+                        @if (!string.IsNullOrEmpty(Model.FileName))
+                        {
+                            <div class="alert alert-info">
+                                <i class="bi bi-file-earmark"></i>
+                                Mevcut dosya: <strong>@Model.FileName</strong>
+                            </div>
+                        }
+
+                        <div class="mb-3">
+                            <label class="form-label">Yeni Dosya (Opsiyonel)</label>
+                            <input type="file" name="file" class="form-control"
+                                   accept=".pdf,.ppt,.pptx,.doc,.docx" />
+                            <small class="text-muted">
+                                Yeni dosya yüklemek istemiyorsanız boş bırakın.
+                            </small>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left"></i> İptal
+                            </a>
+                            <button type="submit" class="btn btn-warning">
+                                <i class="bi bi-save"></i> Güncelle
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+}

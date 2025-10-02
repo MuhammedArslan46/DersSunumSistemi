@@ -1,0 +1,79 @@
+@model DersSunumSistemi.Models.Presentation
+
+@{
+    ViewData["Title"] = "Sunum Sil";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0"><i class="bi bi-exclamation-triangle"></i> Sunum Sil</h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-circle"></i>
+                        <strong>Dikkat!</strong> Bu sunumu silmek istediğinizden emin misiniz?
+                    </div>
+
+                    <dl class="row">
+                        <dt class="col-sm-3">ID:</dt>
+                        <dd class="col-sm-9">@Model.Id</dd>
+
+                        <dt class="col-sm-3">Sunum Başlığı:</dt>
+                        <dd class="col-sm-9"><strong>@Model.Title</strong></dd>
+
+                        <dt class="col-sm-3">Ders:</dt>
+                        <dd class="col-sm-9">@Model.Course?.Name</dd>
+
+                        <dt class="col-sm-3">Kategori:</dt>
+                        <dd class="col-sm-9"><span class="badge bg-primary">@Model.Course?.Category?.Name</span></dd>
+
+                        <dt class="col-sm-3">Açıklama:</dt>
+                        <dd class="col-sm-9">@Model.Description</dd>
+
+                        <dt class="col-sm-3">Dosya:</dt>
+                        <dd class="col-sm-9">
+                            @if (!string.IsNullOrEmpty(Model.FileName))
+                            {
+                                <span class="badge bg-info">@Model.FileName</span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">Dosya yok</span>
+                            }
+                        </dd>
+
+                        <dt class="col-sm-3">Yüklenme:</dt>
+                        <dd class="col-sm-9">@Model.UploadDate.ToString("dd.MM.yyyy HH:mm")</dd>
+                    </dl>
+
+                    @if (!string.IsNullOrEmpty(Model.FileName))
+                    {
+                        <div class="alert alert-danger">
+                            <i class="bi bi-exclamation-triangle-fill"></i>
+                            <strong>Uyarı!</strong> Sunumu silerseniz dosya da silinecektir!
+                        </div>
+                    }
+
+                    <form asp-action="Delete" method="post">
+                        <input type="hidden" asp-for="Id" />
+                        <div class="d-flex justify-content-between">
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left"></i> İptal
+                            </a>
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-trash"></i> Sil
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+}

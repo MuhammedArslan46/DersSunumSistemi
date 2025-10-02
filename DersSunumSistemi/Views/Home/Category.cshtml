@@ -1,0 +1,78 @@
+@model DersSunumSistemi.Models.Category
+
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="Index">Ana Sayfa</a></li>
+            <li class="breadcrumb-item active">@Model.Name</li>
+        </ol>
+    </nav>
+
+    <div class="mb-4">
+        <h1><i class="bi bi-folder"></i> @Model.Name</h1>
+        <p class="lead text-muted">@Model.Description</p>
+    </div>
+
+    @if (Model.Courses.Any())
+    {
+        <div class="row g-4">
+            @foreach (var course in Model.Courses.OrderByDescending(c => c.CreatedDate))
+            {
+                <div class="col-md-6">
+                    <div class="card h-100 shadow-sm hover-shadow">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="mb-0">
+                                <i class="bi bi-book"></i> @course.Name
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">@course.Description</p>
+                            <div class="mb-3">
+                                <i class="bi bi-person"></i>
+                                <strong>Eğitmen:</strong> @course.Instructor
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">
+                                    <i class="bi bi-file-earmark-slides"></i> @course.Presentations.Count Sunum
+                                </small>
+                                <small class="text-muted">
+                                    <i class="bi bi-calendar"></i> @course.CreatedDate.ToString("dd.MM.yyyy")
+                                </small>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <a asp-action="Course" asp-route-id="@course.Id" class="btn btn-success btn-sm w-100">
+                                <i class="bi bi-arrow-right-circle"></i> Sunumlara Git
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info text-center">
+            <i class="bi bi-info-circle"></i>
+            Bu kategoride henüz ders bulunmamaktadır.
+        </div>
+    }
+</div>
+
+<style>
+    .hover-shadow {
+        transition: all 0.3s ease;
+    }
+    .hover-shadow:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.15) !important;
+    }
+</style>
+
+@section Scripts {
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+}
