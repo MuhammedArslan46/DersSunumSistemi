@@ -4,9 +4,15 @@ namespace DersSunumSistemi.Models
     {
         public int Id { get; set; }
         public string UserName { get; set; } = string.Empty;
-        public string Password { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string PasswordHash { get; set; } = string.Empty;
         public string FullName { get; set; } = string.Empty;
-        public bool IsAdmin { get; set; }
+        public UserRole Role { get; set; } = UserRole.Student;
+        public bool IsActive { get; set; } = true;
         public DateTime CreatedDate { get; set; }
+        public DateTime? LastLoginDate { get; set; }
+
+        // İlişki: Eğer Instructor ise
+        public Instructor? Instructor { get; set; }
     }
 }

@@ -1,45 +1,125 @@
-﻿@model IEnumerable<DersSunumSistemi.Models.Category>
+﻿@model IEnumerable<DersSunumSistemi.Models.Course>
 
 @{
     ViewData["Title"] = "Ana Sayfa";
 }
 
-<div class="hero-section bg-primary text-white text-center py-5 mb-5">
+<!-- Hero Section -->
+<div class="hero-section text-center mb-5">
     <div class="container">
-        <h1 class="display-3 fw-bold">Ders Sunum Sistemi</h1>
-        <p class="lead">Tüm ders sunumlarınıza tek noktadan erişin</p>
+        <h1 class="display-4 fw-bold mb-3">Akademik Ders Platformu</h1>
+        <p class="lead mb-4">Akademisyenlerin ders materyallerini öğrencilerle paylaşabileceği modern platform</p>
+
+        <!-- Search Bar -->
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <form method="get" asp-action="Index" class="mb-4">
+                    <div class="input-group input-group-lg shadow">
+                        <span class="input-group-text bg-white border-end-0">
+                            <i class="bi bi-search"></i>
+                        </span>
+                        <input type="text" name="search" class="form-control border-start-0"
+                               placeholder="Ders adı, kod veya akademisyen ara..."
+                               value="@ViewBag.Search">
+                        <button class="btn btn-primary px-4" type="submit">
+                            <i class="bi bi-search me-2"></i>Ara
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <form method="get" asp-action="Index" class="row g-2">
+                    <div class="col-md-5">
+                        <select name="categoryId" class="form-select" onchange="this.form.submit()">
+                            <option value="">Tüm Kategoriler</option>
+                            @foreach (var cat in ViewBag.Categories as List<DersSunumSistemi.Models.Category>)
+                            {
+                                <option value="@cat.Id" selected="@(ViewBag.CategoryId == cat.Id)">@cat.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-5">
+                        <select name="departmentId" class="form-select" onchange="this.form.submit()">
+                            <option value="">Tüm Bölümler</option>
+                            @foreach (var dept in ViewBag.Departments as List<DersSunumSistemi.Models.Department>)
+                            {
+                                <option value="@dept.Id" selected="@(ViewBag.DepartmentId == dept.Id)">@dept.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <a href="@Url.Action("Index")" class="btn btn-outline-secondary w-100">
+                            <i class="bi bi-x-circle"></i> Temizle
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
 
+<!-- Courses Section -->
 <div class="container">
-    <h2 class="mb-4"><i class="bi bi-folder2-open"></i> Kategoriler</h2>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-book"></i> Dersler</h2>
+        <span class="badge bg-primary">@Model.Count() Ders Bulundu</span>
+    </div>
 
     @if (Model.Any())
     {
         <div class="row g-4">
-            @foreach (var category in Model)
+            @foreach (var course in Model)
             {
                 <div class="col-md-6 col-lg-4">
-                    <div class="card h-100 shadow-sm hover-shadow">
-                        <div class="card-header bg-gradient-primary text-white">
-                            <h5 class="mb-0">
-                                <i class="bi bi-folder"></i> @category.Name
-                            </h5>
-                        </div>
-                        <div class="card-body">
-                            <p class="card-text">@category.Description</p>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <small class="text-muted">
-                                    <i class="bi bi-book"></i> @category.Courses.Count Ders
-                                </small>
-                                <small class="text-muted">
-                                    <i class="bi bi-file-earmark-slides"></i> @category.Courses.Sum(c => c.Presentations.Count) Sunum
-                                </small>
+                    <div class="card course-card h-100">
+                        <div class="card-img-top d-flex align-items-center justify-content-center text-white" style="height: 180px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                            <div class="text-center">
+                                <h3 class="mb-0">@course.Code</h3>
+                                <small>@course.Credits Kredi</small>
                             </div>
                         </div>
-                        <div class="card-footer bg-transparent">
-                            <a asp-action="Category" asp-route-id="@category.Id" class="btn btn-primary btn-sm w-100">
-                                <i class="bi bi-arrow-right-circle"></i> Derslere Git
+                        <div class="card-body">
+                            <h5 class="card-title">@course.Name</h5>
+                            <p class="card-text text-muted small">
+                                @{
+                                    var desc = course.Description ?? "";
+                                    var shortDesc = desc.Length > 100 ? desc.Substring(0, 100) + "..." : desc;
+                                }
+                                @shortDesc
+                            </p>
+
+                            <div class="mb-2">
+                                <span class="badge bg-info text-dark">
+                                    <i class="bi bi-grid-3x3-gap"></i> @course.Category?.Name
+                                </span>
+                                @if (course.Semester != null)
+                                {
+                                    <span class="badge bg-secondary">@course.Semester @course.Year</span>
+                                }
+                            </div>
+
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="instructor-avatar-small me-2">
+                                    @(course.Instructor?.FullName?.Substring(0, 1))
+                                </div>
+                                <div class="flex-grow-1">
+                                    <small class="d-block fw-bold">@course.Instructor?.FullName</small>
+                                    <small class="text-muted">@course.Instructor?.Department?.Name</small>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-between text-muted small mb-3">
+                                <span><i class="bi bi-file-earmark-slides"></i> @course.Presentations.Count Materyal</span>
+                                <span><i class="bi bi-eye"></i> @course.Presentations.Sum(p => p.ViewCount) Görüntülenme</span>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent border-0">
+                            <a asp-action="Course" asp-route-id="@course.Id" class="btn btn-primary w-100">
+                                <i class="bi bi-arrow-right-circle"></i> Dersi Görüntüle
                             </a>
                         </div>
                     </div>
@@ -50,25 +130,25 @@
     else
     {
         <div class="alert alert-info text-center">
-            <i class="bi bi-info-circle"></i>
-            Henüz kategori eklenmemiş. Lütfen admin panelinden kategori ekleyin.
+            <i class="bi bi-info-circle fs-1 d-block mb-3"></i>
+            <h5>Henüz ders bulunmuyor</h5>
+            <p class="mb-0">Arama kriterlerinize uygun ders bulunamadı. Lütfen farklı filtreler deneyin.</p>
         </div>
     }
 </div>
 
+@section Styles {
 <style>
-    .hover-shadow {
-        transition: all 0.3s ease;
-    }
-    .hover-shadow:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 25px rgba(0,0,0,0.15) !important;
-    }
-    .bg-gradient-primary {
+    .instructor-avatar-small {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
     }
 </style>
-
-@section Scripts {
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
 }

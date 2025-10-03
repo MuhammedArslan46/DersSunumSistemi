@@ -1,41 +1,86 @@
 @{
     ViewData["Title"] = "Admin Panel";
+    var fullName = User.Claims.FirstOrDefault(c => c.Type == "FullName")?.Value ?? User.Identity?.Name;
 }
 
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>Admin Paneli</h2>
-        <div>
-            <span class="me-3">Hoşgeldin, @Context.Session.GetString("UserName")</span>
-            <a asp-action="Logout" class="btn btn-danger">Çıkış</a>
+<div class="container">
+    <div class="mb-4">
+        <h1><i class="bi bi-speedometer2"></i> Admin Paneli</h1>
+        <p class="text-muted">Hoş geldiniz, @fullName</p>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="card stats-card primary">
+                <div class="stats-icon">
+                    <i class="bi bi-people"></i>
+                </div>
+                <h3>@ViewBag.UserCount</h3>
+                <p class="text-muted mb-0">Kullanıcı</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stats-card success">
+                <div class="stats-icon">
+                    <i class="bi bi-person-badge"></i>
+                </div>
+                <h3>@ViewBag.InstructorCount</h3>
+                <p class="text-muted mb-0">Akademisyen</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stats-card info">
+                <div class="stats-icon">
+                    <i class="bi bi-book"></i>
+                </div>
+                <h3>@ViewBag.CourseCount</h3>
+                <p class="text-muted mb-0">Ders</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stats-card warning">
+                <div class="stats-icon">
+                    <i class="bi bi-file-earmark-slides"></i>
+                </div>
+                <h3>@ViewBag.PresentationCount</h3>
+                <p class="text-muted mb-0">Materyal</p>
+            </div>
         </div>
     </div>
 
-    <div class="row">
+    <!-- Management Cards -->
+    <div class="row g-4">
         <div class="col-md-4">
-            <div class="card bg-primary text-white">
+            <div class="card h-100">
                 <div class="card-body">
-                    <h5 class="card-title">Kategoriler</h5>
-                    <h2>@ViewBag.CategoryCount</h2>
-                    <a asp-controller="Categories" asp-action="Index" class="btn btn-light">Yönet</a>
+                    <h5 class="card-title"><i class="bi bi-people"></i> Kullanıcı Yönetimi</h5>
+                    <p class="card-text">Kullanıcıları ve akademisyenleri yönetin</p>
+                    <a asp-action="Users" class="btn btn-primary">
+                        <i class="bi bi-arrow-right-circle"></i> Yönet
+                    </a>
                 </div>
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card bg-success text-white">
+            <div class="card h-100">
                 <div class="card-body">
-                    <h5 class="card-title">Dersler</h5>
-                    <h2>@ViewBag.CourseCount</h2>
-                    <a asp-controller="Courses" asp-action="Index" class="btn btn-light">Yönet</a>
+                    <h5 class="card-title"><i class="bi bi-building"></i> Bölüm Yönetimi</h5>
+                    <p class="card-text">Akademik bölümleri yönetin</p>
+                    <a asp-action="Departments" class="btn btn-primary">
+                        <i class="bi bi-arrow-right-circle"></i> Yönet
+                    </a>
                 </div>
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card bg-info text-white">
+            <div class="card h-100">
                 <div class="card-body">
-                    <h5 class="card-title">Sunumlar</h5>
-                    <h2>@ViewBag.PresentationCount</h2>
-                    <a asp-controller="Presentations" asp-action="Index" class="btn btn-light">Yönet</a>
+                    <h5 class="card-title"><i class="bi bi-folder"></i> Kategori Yönetimi</h5>
+                    <p class="card-text">Ders kategorilerini yönetin</p>
+                    <a asp-controller="Categories" asp-action="Index" class="btn btn-primary">
+                        <i class="bi bi-arrow-right-circle"></i> Yönet
+                    </a>
                 </div>
             </div>
         </div>

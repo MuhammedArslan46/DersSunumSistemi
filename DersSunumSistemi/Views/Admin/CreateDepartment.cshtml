@@ -1,0 +1,45 @@
+@{
+    ViewData["Title"] = "Yeni Bölüm Ekle";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0"><i class="bi bi-plus-circle"></i> Yeni Bölüm Ekle</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" asp-action="CreateDepartment">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Bölüm Adı</label>
+                            <input type="text" class="form-control" id="name" name="name"
+                                   placeholder="Örn: Bilgisayar Mühendisliği" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="code" class="form-label">Bölüm Kodu</label>
+                            <input type="text" class="form-control" id="code" name="code"
+                                   placeholder="Örn: BLM" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Açıklama</label>
+                            <textarea class="form-control" id="description" name="description" rows="3"
+                                      placeholder="Bölüm hakkında kısa açıklama..."></textarea>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle me-2"></i>Kaydet
+                            </button>
+                            <a asp-action="Departments" class="btn btn-secondary">
+                                <i class="bi bi-x-circle me-2"></i>İptal
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,109 @@
+@{
+    ViewData["Title"] = "Yeni Kullanıcı Ekle";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0"><i class="bi bi-person-plus"></i> Yeni Kullanıcı Ekle</h4>
+                </div>
+                <div class="card-body">
+                    @if (ViewBag.Error != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>@ViewBag.Error
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    <form method="post" asp-action="CreateUser">
+                        <div class="mb-3">
+                            <label for="fullName" class="form-label">Ad Soyad</label>
+                            <input type="text" class="form-control" id="fullName" name="fullName" required>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="userName" class="form-label">Kullanıcı Adı</label>
+                                <input type="text" class="form-control" id="userName" name="userName" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="email" class="form-label">E-posta</label>
+                                <input type="email" class="form-control" id="email" name="email" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Şifre</label>
+                            <input type="password" class="form-control" id="password" name="password" minlength="6" required>
+                            <div class="form-text">Minimum 6 karakter</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="role" class="form-label">Rol</label>
+                            <select class="form-select" id="role" name="role" required onchange="toggleInstructorFields()">
+                                <option value="">Rol Seçin</option>
+                                <option value="3">Öğrenci</option>
+                                <option value="2">Akademisyen</option>
+                                <option value="1">Admin</option>
+                            </select>
+                        </div>
+
+                        <div id="instructorFields" style="display: none;">
+                            <div class="alert alert-info">
+                                <i class="bi bi-info-circle me-2"></i>
+                                Akademisyen rolü için ek bilgiler
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="departmentId" class="form-label">Bölüm</label>
+                                <select class="form-select" id="departmentId" name="departmentId">
+                                    <option value="">Bölüm Seçin</option>
+                                    @foreach (var dept in ViewBag.Departments as List<DersSunumSistemi.Models.Department>)
+                                    {
+                                        <option value="@dept.Id">@dept.Name</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="title" class="form-label">Ünvan</label>
+                                <input type="text" class="form-control" id="title" name="title"
+                                       placeholder="Örn: Prof. Dr., Doç. Dr., Dr. Öğr. Üyesi">
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle me-2"></i>Kaydet
+                            </button>
+                            <a asp-action="Users" class="btn btn-secondary">
+                                <i class="bi bi-x-circle me-2"></i>İptal
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    function toggleInstructorFields() {
+        const role = document.getElementById('role').value;
+        const instructorFields = document.getElementById('instructorFields');
+        const departmentId = document.getElementById('departmentId');
+
+        if (role === '2') { // Instructor
+            instructorFields.style.display = 'block';
+            departmentId.required = true;
+        } else {
+            instructorFields.style.display = 'none';
+            departmentId.required = false;
+        }
+    }
+</script>
+}

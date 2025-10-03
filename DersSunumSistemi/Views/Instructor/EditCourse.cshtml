@@ -1,0 +1,97 @@
+@model DersSunumSistemi.Models.Course
+
+@{
+    ViewData["Title"] = "Ders Düzenle";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0"><i class="bi bi-pencil"></i> Ders Düzenle</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" asp-action="EditCourse">
+                        <input type="hidden" name="id" value="@Model.Id" />
+
+                        <div class="row">
+                            <div class="col-md-8 mb-3">
+                                <label for="name" class="form-label">Ders Adı</label>
+                                <input type="text" class="form-control" id="name" name="name" value="@Model.Name" required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="code" class="form-label">Ders Kodu</label>
+                                <input type="text" class="form-control" id="code" name="code" value="@Model.Code" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Açıklama</label>
+                            <textarea class="form-control" id="description" name="description" rows="3">@Model.Description</textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="syllabus" class="form-label">Ders İçeriği / Müfredat</label>
+                            <textarea class="form-control" id="syllabus" name="syllabus" rows="5">@Model.Syllabus</textarea>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="categoryId" class="form-label">Kategori</label>
+                                <select class="form-select" id="categoryId" name="categoryId" required>
+                                    @foreach (var category in ViewBag.Categories as List<DersSunumSistemi.Models.Category>)
+                                    {
+                                        var isSelected = Model.CategoryId == category.Id;
+                                        <option value="@category.Id" selected="@isSelected">@category.Name</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="credits" class="form-label">Kredi</label>
+                                <input type="number" class="form-control" id="credits" name="credits" value="@Model.Credits" min="1" max="10">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="semester" class="form-label">Dönem</label>
+                                <select class="form-select" id="semester" name="semester">
+                                    <option value="">Dönem Seçin</option>
+                                    @{
+                                        var isGuz = Model.Semester == "Güz";
+                                        var isBahar = Model.Semester == "Bahar";
+                                        var isYaz = Model.Semester == "Yaz";
+                                    }
+                                    <option value="Güz" selected="@isGuz">Güz</option>
+                                    <option value="Bahar" selected="@isBahar">Bahar</option>
+                                    <option value="Yaz" selected="@isYaz">Yaz</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="year" class="form-label">Akademik Yıl</label>
+                                <input type="number" class="form-control" id="year" name="year" value="@Model.Year" min="2020" max="2030">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label d-block">Durum</label>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="isActive" name="isActive" @(Model.IsActive ? "checked" : "")>
+                                    <label class="form-check-label" for="isActive">Ders Aktif</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle me-2"></i>Güncelle
+                            </button>
+                            <a asp-action="MyCourses" class="btn btn-secondary">
+                                <i class="bi bi-x-circle me-2"></i>İptal
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

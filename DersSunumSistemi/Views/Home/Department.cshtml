@@ -1,0 +1,93 @@
+@model DersSunumSistemi.Models.Department
+
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<div class="container">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="Index">Ana Sayfa</a></li>
+            <li class="breadcrumb-item"><a asp-action="Departments">Bölümler</a></li>
+            <li class="breadcrumb-item active">@Model.Name</li>
+        </ol>
+    </nav>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <h1 class="card-title"><i class="bi bi-building"></i> @Model.Name</h1>
+            <p class="text-muted">@Model.Code</p>
+            <p class="card-text">@Model.Description</p>
+            <div class="d-flex gap-2">
+                <span class="badge bg-info text-dark">
+                    <i class="bi bi-person-badge"></i> @Model.Instructors.Count Akademisyen
+                </span>
+                <span class="badge bg-success">
+                    <i class="bi bi-book"></i> @Model.Instructors.Sum(i => i.Courses.Count) Ders
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <h3 class="mb-3"><i class="bi bi-person-badge"></i> Akademisyenler</h3>
+
+    @if (Model.Instructors.Any())
+    {
+        <div class="row g-4 mb-5">
+            @foreach (var instructor in Model.Instructors)
+            {
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">@instructor.FullName</h5>
+                            <p class="text-muted mb-2">@instructor.Title</p>
+                            <span class="badge bg-info text-dark">
+                                <i class="bi bi-book"></i> @instructor.Courses.Count Ders
+                            </span>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <a asp-action="Instructor" asp-route-id="@instructor.Id" class="btn btn-sm btn-primary">
+                                <i class="bi bi-arrow-right-circle"></i> Profili Görüntüle
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+    <h3 class="mb-3"><i class="bi bi-book"></i> Dersler</h3>
+
+    @{
+        var allCourses = Model.Instructors.SelectMany(i => i.Courses).ToList();
+    }
+
+    @if (allCourses.Any())
+    {
+        <div class="row g-4">
+            @foreach (var course in allCourses)
+            {
+                <div class="col-md-6 col-lg-4">
+                    <div class="card course-card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">@course.Code - @course.Name</h5>
+                            <p class="text-muted small">@course.Category?.Name</p>
+                            <span class="badge bg-secondary">@course.Credits Kredi</span>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <a asp-action="Course" asp-route-id="@course.Id" class="btn btn-sm btn-primary">
+                                <i class="bi bi-arrow-right-circle"></i> Dersi Görüntüle
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle"></i> Bu bölümde henüz ders bulunmuyor.
+        </div>
+    }
+</div>

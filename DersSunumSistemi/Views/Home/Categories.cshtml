@@ -1,0 +1,54 @@
+@model IEnumerable<DersSunumSistemi.Models.Category>
+
+@{
+    ViewData["Title"] = "Kategoriler";
+}
+
+<div class="container">
+    <div class="mb-4">
+        <h1><i class="bi bi-grid-3x3-gap"></i> Kategoriler</h1>
+        <p class="text-muted">Tüm ders kategorilerine göz atın</p>
+    </div>
+
+    @if (Model.Any())
+    {
+        <div class="row g-4">
+            @foreach (var category in Model)
+            {
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="stats-icon bg-primary text-white me-3" style="width: 60px; height: 60px; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                                    <i class="bi bi-folder fs-3"></i>
+                                </div>
+                                <div>
+                                    <h5 class="card-title mb-0">@category.Name</h5>
+                                    <small class="text-muted">Kategori</small>
+                                </div>
+                            </div>
+                            <p class="card-text">@category.Description</p>
+                            <div class="d-flex justify-content-between mb-3">
+                                <span class="badge bg-info text-dark">
+                                    <i class="bi bi-book"></i> @category.Courses.Count Ders
+                                </span>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <a asp-action="Category" asp-route-id="@category.Id" class="btn btn-primary w-100">
+                                <i class="bi bi-arrow-right-circle"></i> Dersleri Görüntüle
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info text-center">
+            <i class="bi bi-info-circle fs-1 d-block mb-3"></i>
+            <h5>Henüz kategori bulunmuyor</h5>
+        </div>
+    }
+</div>

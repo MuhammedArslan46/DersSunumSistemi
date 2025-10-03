@@ -1,0 +1,102 @@
+@model DersSunumSistemi.Models.Instructor
+
+@{
+    ViewData["Title"] = "Profilim";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    @if (!string.IsNullOrEmpty(Model.ImagePath))
+                    {
+                        <img src="@Model.ImagePath" alt="@Model.FullName" class="rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;">
+                    }
+                    else
+                    {
+                        <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center mb-3"
+                             style="width: 150px; height: 150px; font-size: 3rem;">
+                            @Model.FullName.Substring(0, 1).ToUpper()
+                        </div>
+                    }
+                    <h4>@Model.FullName</h4>
+                    <p class="text-muted">@Model.Title</p>
+                    <p class="text-muted">@Model.Department?.Name</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Profil Bilgilerim</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" asp-action="UpdateProfile" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label class="form-label">Ad Soyad</label>
+                            <input type="text" class="form-control" value="@Model.FullName" readonly>
+                            <div class="form-text">İsim değişikliği için sistem yöneticisine başvurun</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">E-posta</label>
+                            <input type="email" class="form-control" value="@Model.Email" readonly>
+                            <div class="form-text">E-posta değişikliği için sistem yöneticisine başvurun</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">Telefon</label>
+                            <input type="tel" class="form-control" id="phone" name="phone" value="@Model.Phone">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="title" class="form-label">Ünvan</label>
+                            <input type="text" class="form-control" id="title" name="title" value="@Model.Title"
+                                   placeholder="Örn: Prof. Dr., Doç. Dr., Dr. Öğr. Üyesi">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="bio" class="form-label">Biyografi</label>
+                            <textarea class="form-control" id="bio" name="bio" rows="5"
+                                      placeholder="Kendinizden kısaca bahsedin...">@Model.Bio</textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="image" class="form-label">Profil Fotoğrafı</label>
+                            <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                            <div class="form-text">Yeni bir fotoğraf seçmek mevcut fotoğrafınızın yerine geçer</div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle me-2"></i>Güncelle
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0">İstatistiklerim</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-4">
+                            <h3 class="text-primary">@Model.Courses.Count</h3>
+                            <p class="text-muted">Ders</p>
+                        </div>
+                        <div class="col-md-4">
+                            <h3 class="text-success">@Model.Courses.Sum(c => c.Presentations.Count)</h3>
+                            <p class="text-muted">Materyal</p>
+                        </div>
+                        <div class="col-md-4">
+                            <h3 class="text-info">@Model.Courses.SelectMany(c => c.Presentations).Sum(p => p.ViewCount)</h3>
+                            <p class="text-muted">Görüntülenme</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

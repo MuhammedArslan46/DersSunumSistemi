@@ -1,0 +1,128 @@
+@model IEnumerable<DersSunumSistemi.Models.Course>
+
+@{
+    ViewData["Title"] = "Dashboard";
+    var instructor = ViewBag.Instructor as DersSunumSistemi.Models.Instructor;
+}
+
+<div class="container">
+    <div class="mb-4">
+        <h1><i class="bi bi-speedometer2"></i> Akademisyen Paneli</h1>
+        <p class="text-muted">Hoş geldiniz, @instructor?.FullName</p>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-4">
+            <div class="card stats-card primary">
+                <div class="stats-icon">
+                    <i class="bi bi-book"></i>
+                </div>
+                <h3>@ViewBag.TotalCourses</h3>
+                <p class="text-muted mb-0">Toplam Ders</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card stats-card success">
+                <div class="stats-icon">
+                    <i class="bi bi-file-earmark-slides"></i>
+                </div>
+                <h3>@ViewBag.TotalPresentations</h3>
+                <p class="text-muted mb-0">Toplam Materyal</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card stats-card info">
+                <div class="stats-icon">
+                    <i class="bi bi-eye"></i>
+                </div>
+                <h3>@ViewBag.TotalViews</h3>
+                <p class="text-muted mb-0">Toplam Görüntülenme</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title mb-3">Hızlı İşlemler</h5>
+            <div class="d-flex gap-2 flex-wrap">
+                <a asp-action="CreateCourse" class="btn btn-primary">
+                    <i class="bi bi-plus-circle me-2"></i>Yeni Ders Ekle
+                </a>
+                <a asp-action="MyCourses" class="btn btn-outline-primary">
+                    <i class="bi bi-book me-2"></i>Derslerim
+                </a>
+                <a asp-action="Profile" class="btn btn-outline-secondary">
+                    <i class="bi bi-person me-2"></i>Profilim
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Courses -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0"><i class="bi bi-clock-history"></i> Son Derslerim</h5>
+        </div>
+        <div class="card-body">
+            @if (Model.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Ders Kodu</th>
+                                <th>Ders Adı</th>
+                                <th>Kategori</th>
+                                <th>Materyal</th>
+                                <th>Görüntülenme</th>
+                                <th>İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var course in Model.Take(5))
+                            {
+                                <tr>
+                                    <td><strong>@course.Code</strong></td>
+                                    <td>@course.Name</td>
+                                    <td><span class="badge bg-info text-dark">@course.Category?.Name</span></td>
+                                    <td>@course.Presentations.Count</td>
+                                    <td>@course.Presentations.Sum(p => p.ViewCount)</td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <a asp-action="CourseDetails" asp-route-id="@course.Id"
+                                               class="btn btn-outline-primary">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                            <a asp-action="EditCourse" asp-route-id="@course.Id"
+                                               class="btn btn-outline-secondary">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <div class="text-center mt-3">
+                    <a asp-action="MyCourses" class="btn btn-primary">
+                        Tüm Derslerim <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-info text-center">
+                    <i class="bi bi-info-circle fs-1 d-block mb-3"></i>
+                    <h5>Henüz ders eklenmemiş</h5>
+                    <p class="mb-3">Yeni ders ekleyerek başlayabilirsiniz.</p>
+                    <a asp-action="CreateCourse" class="btn btn-primary">
+                        <i class="bi bi-plus-circle me-2"></i>İlk Dersimi Ekle
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</div>

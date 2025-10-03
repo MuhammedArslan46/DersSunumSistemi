@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using DersSunumSistemi.Data;
 using DersSunumSistemi.Models;
 
 namespace DersSunumSistemi.Controllers
 {
+    [Authorize(Policy = "AdminOnly")]
     public class CategoriesController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -14,18 +16,9 @@ namespace DersSunumSistemi.Controllers
             _context = context;
         }
 
-        // Admin kontrolü
-        private bool IsAdmin()
-        {
-            return HttpContext.Session.GetString("IsAdmin") == "true";
-        }
-
         // Liste
         public async Task<IActionResult> Index()
         {
-            if (!IsAdmin())
-                return RedirectToAction("Login", "Admin");
-
             var categories = await _context.Categories
                 .Include(c => c.Courses)
                 .ToListAsync();
@@ -35,9 +28,6 @@ namespace DersSunumSistemi.Controllers
         // Create GET
         public IActionResult Create()
         {
-            if (!IsAdmin())
-                return RedirectToAction("Login", "Admin");
-
             return View();
         }
 
@@ -46,9 +36,6 @@ namespace DersSunumSistemi.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Category category)
         {
-            if (!IsAdmin())
-                return RedirectToAction("Login", "Admin");
-
             if (ModelState.IsValid)
             {
                 _context.Categories.Add(category);
@@ -62,9 +49,6 @@ namespace DersSunumSistemi.Controllers
         // Edit GET
         public async Task<IActionResult> Edit(int? id)
         {
-            if (!IsAdmin())
-                return RedirectToAction("Login", "Admin");
-
             if (id == null)
                 return NotFound();
 
@@ -80,9 +64,6 @@ namespace DersSunumSistemi.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Category category)
         {
-            if (!IsAdmin())
-                return RedirectToAction("Login", "Admin");
-
             if (id != category.Id)
                 return NotFound();
 
@@ -108,9 +89,6 @@ namespace DersSunumSistemi.Controllers
         // Delete GET
         public async Task<IActionResult> Delete(int? id)
         {
-            if (!IsAdmin())
-                return RedirectToAction("Login", "Admin");
-
             if (id == null)
                 return NotFound();
 
@@ -129,9 +107,6 @@ namespace DersSunumSistemi.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (!IsAdmin())
-                return RedirectToAction("Login", "Admin");
-
             var category = await _context.Categories.FindAsync(id);
             if (category != null)
             {

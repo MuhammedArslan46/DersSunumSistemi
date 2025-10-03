@@ -1,0 +1,57 @@
+@model IEnumerable<DersSunumSistemi.Models.Department>
+
+@{
+    ViewData["Title"] = "Bölümler";
+}
+
+<div class="container">
+    <div class="mb-4">
+        <h1><i class="bi bi-building"></i> Bölümler</h1>
+        <p class="text-muted">Tüm akademik bölümlere göz atın</p>
+    </div>
+
+    @if (Model.Any())
+    {
+        <div class="row g-4">
+            @foreach (var department in Model)
+            {
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="stats-icon text-white me-3" style="width: 60px; height: 60px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #2193b0 0%, #6dd5ed 100%);">
+                                    <i class="bi bi-building fs-3"></i>
+                                </div>
+                                <div>
+                                    <h5 class="card-title mb-0">@department.Name</h5>
+                                    <small class="text-muted">@department.Code</small>
+                                </div>
+                            </div>
+                            <p class="card-text">@department.Description</p>
+                            <div class="d-flex justify-content-between mb-3">
+                                <span class="badge bg-info text-dark">
+                                    <i class="bi bi-person-badge"></i> @department.Instructors.Count Akademisyen
+                                </span>
+                                <span class="badge bg-success">
+                                    <i class="bi bi-book"></i> @department.Instructors.Sum(i => i.Courses.Count) Ders
+                                </span>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <a asp-action="Department" asp-route-id="@department.Id" class="btn btn-primary w-100">
+                                <i class="bi bi-arrow-right-circle"></i> Detayları Görüntüle
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info text-center">
+            <i class="bi bi-info-circle fs-1 d-block mb-3"></i>
+            <h5>Henüz bölüm bulunmuyor</h5>
+        </div>
+    }
+</div>

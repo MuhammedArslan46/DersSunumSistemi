@@ -1,0 +1,71 @@
+@model IEnumerable<DersSunumSistemi.Models.User>
+
+@{
+    ViewData["Title"] = "Kullanıcı Yönetimi";
+}
+
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1><i class="bi bi-people"></i> Kullanıcı Yönetimi</h1>
+        <a asp-action="CreateUser" class="btn btn-primary">
+            <i class="bi bi-person-plus me-2"></i>Yeni Kullanıcı Ekle
+        </a>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Kullanıcı Adı</th>
+                            <th>Ad Soyad</th>
+                            <th>E-posta</th>
+                            <th>Rol</th>
+                            <th>Durum</th>
+                            <th>Kayıt Tarihi</th>
+                            <th>Son Giriş</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var user in Model)
+                        {
+                            <tr>
+                                <td><strong>@user.UserName</strong></td>
+                                <td>
+                                    @user.FullName
+                                    @if (user.Instructor != null)
+                                    {
+                                        <br><small class="text-muted">@user.Instructor.Title</small>
+                                    }
+                                </td>
+                                <td>@user.Email</td>
+                                <td>
+                                    @switch (user.Role)
+                                    {
+                                        case DersSunumSistemi.Models.UserRole.Admin:
+                                            <span class="badge bg-danger">Admin</span>
+                                            break;
+                                        case DersSunumSistemi.Models.UserRole.Instructor:
+                                            <span class="badge bg-primary">Akademisyen</span>
+                                            break;
+                                        case DersSunumSistemi.Models.UserRole.Student:
+                                            <span class="badge bg-info">Öğrenci</span>
+                                            break;
+                                    }
+                                </td>
+                                <td>
+                                    <span class="badge @(user.IsActive ? "bg-success" : "bg-secondary")">
+                                        @(user.IsActive ? "Aktif" : "Pasif")
+                                    </span>
+                                </td>
+                                <td><small>@user.CreatedDate.ToString("dd.MM.yyyy HH:mm")</small></td>
+                                <td><small>@(user.LastLoginDate?.ToString("dd.MM.yyyy HH:mm") ?? "-")</small></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
