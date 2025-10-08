@@ -598,6 +598,7 @@ namespace DersSunumSistemi.Data
                 IsActive = true,
                 CreatedDate = DateTime.Now,
                 CategoryId = kategori2.Id,
+                DepartmentId = yazilimBolumu.Id,
                 InstructorId = instructor1.Id
             };
 
@@ -613,6 +614,7 @@ namespace DersSunumSistemi.Data
                 IsActive = true,
                 CreatedDate = DateTime.Now,
                 CategoryId = kategori2.Id,
+                DepartmentId = ybs.Id,
                 InstructorId = instructor2.Id
             };
 
@@ -628,6 +630,7 @@ namespace DersSunumSistemi.Data
                 IsActive = true,
                 CreatedDate = DateTime.Now,
                 CategoryId = kategori2.Id,
+                DepartmentId = yapiMuh.Id,
                 InstructorId = instructor3.Id
             };
 
@@ -643,6 +646,7 @@ namespace DersSunumSistemi.Data
                 IsActive = true,
                 CreatedDate = DateTime.Now,
                 CategoryId = kategori2.Id,
+                DepartmentId = elektronikBolumu.Id,
                 InstructorId = instructor4.Id
             };
 
@@ -658,6 +662,7 @@ namespace DersSunumSistemi.Data
                 IsActive = true,
                 CreatedDate = DateTime.Now,
                 CategoryId = kategori3.Id,
+                DepartmentId = icHastaliklari.Id,
                 InstructorId = instructor5.Id
             };
 
@@ -673,6 +678,7 @@ namespace DersSunumSistemi.Data
                 IsActive = true,
                 CreatedDate = DateTime.Now,
                 CategoryId = kategori3.Id,
+                DepartmentId = genelCerrahi.Id,
                 InstructorId = instructor6.Id
             };
 
@@ -688,6 +694,7 @@ namespace DersSunumSistemi.Data
                 IsActive = true,
                 CreatedDate = DateTime.Now,
                 CategoryId = kategori4.Id,
+                DepartmentId = tarimsal.Id,
                 InstructorId = instructor7.Id
             };
 
@@ -703,6 +710,7 @@ namespace DersSunumSistemi.Data
                 IsActive = true,
                 CreatedDate = DateTime.Now,
                 CategoryId = kategori4.Id,
+                DepartmentId = hayvanSagligi.Id,
                 InstructorId = instructor8.Id
             };
 
@@ -718,6 +726,7 @@ namespace DersSunumSistemi.Data
                 IsActive = true,
                 CreatedDate = DateTime.Now,
                 CategoryId = kategori2.Id,
+                DepartmentId = webProgramlama.Id,
                 InstructorId = instructor9.Id
             };
 
