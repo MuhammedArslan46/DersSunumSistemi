@@ -28,6 +28,7 @@ namespace DersSunumSistemi.Services
         {
             var user = await _context.Users
                 .Include(u => u.Instructor)
+                .Include(u => u.Department)
                 .FirstOrDefaultAsync(u => u.UserName == userName && u.IsActive);
 
             if (user == null || !VerifyPassword(password, user.PasswordHash))
@@ -41,7 +42,7 @@ namespace DersSunumSistemi.Services
             return user;
         }
 
-        public async Task<User?> RegisterAsync(string userName, string email, string password, string fullName, UserRole role = UserRole.Student)
+        public async Task<User?> RegisterAsync(string userName, string email, string password, string fullName, UserRole role = UserRole.Student, int? departmentId = null)
         {
             // Kullanıcı adı veya email zaten var mı kontrol et
             if (await _context.Users.AnyAsync(u => u.UserName == userName || u.Email == email))
@@ -56,6 +57,7 @@ namespace DersSunumSistemi.Services
                 PasswordHash = HashPassword(password),
                 FullName = fullName,
                 Role = role,
+                DepartmentId = departmentId,
                 IsActive = true,
                 CreatedDate = DateTime.Now
             };

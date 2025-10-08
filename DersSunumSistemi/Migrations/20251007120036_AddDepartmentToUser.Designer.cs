@@ -4,6 +4,7 @@ using DersSunumSistemi.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DersSunumSistemi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251007120036_AddDepartmentToUser")]
+    partial class AddDepartmentToUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -64,9 +67,6 @@ namespace DersSunumSistemi.Migrations
                     b.Property<int>("Credits")
                         .HasColumnType("int");
 
-                    b.Property<int>("DepartmentId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -98,8 +98,6 @@ namespace DersSunumSistemi.Migrations
                     b.HasIndex("CategoryId");
 
                     b.HasIndex("Code");
-
-                    b.HasIndex("DepartmentId");
 
                     b.HasIndex("InstructorId");
 
@@ -368,12 +366,6 @@ namespace DersSunumSistemi.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("DersSunumSistemi.Models.Department", "Department")
-                        .WithMany("Courses")
-                        .HasForeignKey("DepartmentId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("DersSunumSistemi.Models.Instructor", "Instructor")
                         .WithMany("Courses")
                         .HasForeignKey("InstructorId")
@@ -381,8 +373,6 @@ namespace DersSunumSistemi.Migrations
                         .IsRequired();
 
                     b.Navigation("Category");
-
-                    b.Navigation("Department");
 
                     b.Navigation("Instructor");
                 });
@@ -461,8 +451,6 @@ namespace DersSunumSistemi.Migrations
 
             modelBuilder.Entity("DersSunumSistemi.Models.Department", b =>
                 {
-                    b.Navigation("Courses");
-
                     b.Navigation("Instructors");
                 });
 

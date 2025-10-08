@@ -22,6 +22,10 @@ namespace DersSunumSistemi.Models
         public int InstructorId { get; set; }
         public Instructor? Instructor { get; set; }
 
+        // Hangi bölüme ait
+        public int DepartmentId { get; set; }
+        public Department? Department { get; set; }
+
         // Bir dersin birden fazla sunumu olabilir
         public List<Presentation> Presentations { get; set; } = new List<Presentation>();
     }

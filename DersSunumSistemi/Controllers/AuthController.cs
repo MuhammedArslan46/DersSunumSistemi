@@ -4,16 +4,20 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Security.Claims;
 using DersSunumSistemi.Services;
 using DersSunumSistemi.Models;
+using DersSunumSistemi.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace DersSunumSistemi.Controllers
 {
     public class AuthController : Controller
     {
         private readonly IAuthService _authService;
+        private readonly ApplicationDbContext _context;
 
-        public AuthController(IAuthService authService)
+        public AuthController(IAuthService authService, ApplicationDbContext context)
         {
             _authService = authService;
+            _context = context;
         }
 
         [HttpGet]
@@ -75,25 +79,40 @@ namespace DersSunumSistemi.Controllers
         }
 
         [HttpGet]
-        public IActionResult Register()
+        public async Task<IActionResult> Register()
         {
+            ViewBag.Departments = await _context.Departments
+                .Include(d => d.Faculty)
+                .ThenInclude(f => f!.Institution)
+                .OrderBy(d => d.Faculty!.Institution.Name)
+                .ThenBy(d => d.Faculty!.Name)
+                .ThenBy(d => d.Name)
+                .ToListAsync();
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Register(string userName, string email, string password, string confirmPassword, string fullName)
+        public async Task<IActionResult> Register(string userName, string email, string password, string confirmPassword, string fullName, int departmentId)
         {
             if (password != confirmPassword)
             {
                 ViewBag.Error = "Şifreler eşleşmiyor!";
+                ViewBag.Departments = await _context.Departments
+                    .Include(d => d.Faculty)
+                    .ThenInclude(f => f!.Institution)
+                    .ToListAsync();
                 return View();
             }
 
-            var user = await _authService.RegisterAsync(userName, email, password, fullName, UserRole.Student);
+            var user = await _authService.RegisterAsync(userName, email, password, fullName, UserRole.Student, departmentId);
 
             if (user == null)
             {
                 ViewBag.Error = "Kullanıcı adı veya email zaten kullanımda!";
+                ViewBag.Departments = await _context.Departments
+                    .Include(d => d.Faculty)
+                    .ThenInclude(f => f!.Institution)
+                    .ToListAsync();
                 return View();
             }
 

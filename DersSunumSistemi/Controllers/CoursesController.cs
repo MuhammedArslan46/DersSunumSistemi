@@ -23,12 +23,30 @@ namespace DersSunumSistemi.Controllers
         // Liste
         public async Task<IActionResult> Index()
         {
-            if (!IsAdmin())
-                return RedirectToAction("Login", "Admin");
+            var userIdString = HttpContext.Session.GetString("UserId");
+            if (string.IsNullOrEmpty(userIdString))
+                return RedirectToAction("Login", "Auth");
 
-            var courses = await _context.Courses
+            var userId = int.Parse(userIdString);
+            var user = await _context.Users
+                .Include(u => u.Department)
+                .FirstOrDefaultAsync(u => u.Id == userId);
+
+            if (user == null)
+                return RedirectToAction("Login", "Auth");
+
+            IQueryable<Course> coursesQuery = _context.Courses
                 .Include(c => c.Category)
-                .Include(c => c.Presentations)
+                .Include(c => c.Department)
+                .Include(c => c.Presentations);
+
+            // Admin tüm dersleri görebilir, öğrenci sadece kendi bölümünün derslerini
+            if (user.Role == UserRole.Student && user.DepartmentId.HasValue)
+            {
+                coursesQuery = coursesQuery.Where(c => c.DepartmentId == user.DepartmentId.Value);
+            }
+
+            var courses = await coursesQuery
                 .OrderByDescending(c => c.CreatedDate)
                 .ToListAsync();
 
@@ -42,6 +60,7 @@ namespace DersSunumSistemi.Controllers
                 return RedirectToAction("Login", "Admin");
 
             ViewBag.Categories = new SelectList(_context.Categories, "Id", "Name");
+            ViewBag.Departments = new SelectList(_context.Departments, "Id", "Name");
             return View();
         }
 
@@ -63,6 +82,7 @@ namespace DersSunumSistemi.Controllers
             }
 
             ViewBag.Categories = new SelectList(_context.Categories, "Id", "Name", course.CategoryId);
+            ViewBag.Departments = new SelectList(_context.Departments, "Id", "Name", course.DepartmentId);
             return View(course);
         }
 
@@ -80,6 +100,7 @@ namespace DersSunumSistemi.Controllers
                 return NotFound();
 
             ViewBag.Categories = new SelectList(_context.Categories, "Id", "Name", course.CategoryId);
+            ViewBag.Departments = new SelectList(_context.Departments, "Id", "Name", course.DepartmentId);
             return View(course);
         }
 
@@ -112,6 +133,7 @@ namespace DersSunumSistemi.Controllers
             }
 
             ViewBag.Categories = new SelectList(_context.Categories, "Id", "Name", course.CategoryId);
+            ViewBag.Departments = new SelectList(_context.Departments, "Id", "Name", course.DepartmentId);
             return View(course);
         }
 

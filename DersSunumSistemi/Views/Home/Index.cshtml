@@ -7,148 +7,100 @@
 <!-- Hero Section -->
 <div class="hero-section text-center mb-5">
     <div class="container">
-        <h1 class="display-4 fw-bold mb-3">Akademik Ders Platformu</h1>
-        <p class="lead mb-4">Akademisyenlerin ders materyallerini öğrencilerle paylaşabileceği modern platform</p>
-
-        <!-- Search Bar -->
-        <div class="row justify-content-center">
-            <div class="col-lg-8">
-                <form method="get" asp-action="Index" class="mb-4">
-                    <div class="input-group input-group-lg shadow">
-                        <span class="input-group-text bg-white border-end-0">
-                            <i class="bi bi-search"></i>
-                        </span>
-                        <input type="text" name="search" class="form-control border-start-0"
-                               placeholder="Ders adı, kod veya akademisyen ara..."
-                               value="@ViewBag.Search">
-                        <button class="btn btn-primary px-4" type="submit">
-                            <i class="bi bi-search me-2"></i>Ara
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <!-- Filters -->
-        <div class="row justify-content-center">
-            <div class="col-lg-8">
-                <form method="get" asp-action="Index" class="row g-2">
-                    <div class="col-md-5">
-                        <select name="categoryId" class="form-select" onchange="this.form.submit()">
-                            <option value="">Tüm Kategoriler</option>
-                            @foreach (var cat in ViewBag.Categories as List<DersSunumSistemi.Models.Category>)
-                            {
-                                <option value="@cat.Id" selected="@(ViewBag.CategoryId == cat.Id)">@cat.Name</option>
-                            }
-                        </select>
-                    </div>
-                    <div class="col-md-5">
-                        <select name="departmentId" class="form-select" onchange="this.form.submit()">
-                            <option value="">Tüm Bölümler</option>
-                            @foreach (var dept in ViewBag.Departments as List<DersSunumSistemi.Models.Department>)
-                            {
-                                <option value="@dept.Id" selected="@(ViewBag.DepartmentId == dept.Id)">@dept.Name</option>
-                            }
-                        </select>
-                    </div>
-                    <div class="col-md-2">
-                        <a href="@Url.Action("Index")" class="btn btn-outline-secondary w-100">
-                            <i class="bi bi-x-circle"></i> Temizle
-                        </a>
-                    </div>
-                </form>
-            </div>
-        </div>
+        <h1 class="display-4 fw-bold mb-3">Lisansüstü Ders Platformu</h1>
+        <p class="lead mb-4">Akademisyenlerin lisansüstü ders materyallerini öğrencilerle paylaşabileceği modern platform</p>
     </div>
 </div>
 
-<!-- Courses Section -->
+<!-- Welcome Content -->
 <div class="container">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2><i class="bi bi-book"></i> Dersler</h2>
-        <span class="badge bg-primary">@Model.Count() Ders Bulundu</span>
+    <div class="row g-4 mb-5">
+        <div class="col-md-4">
+            <div class="card h-100 text-center p-4 feature-card">
+                <div class="feature-icon mb-4">
+                    <i class="bi bi-building"></i>
+                </div>
+                <h5 class="fw-bold mb-3">Kurumlar</h5>
+                <p class="text-muted mb-4">Üniversiteler ve enstitülere göz atın, fakülte ve bölümleri keşfedin.</p>
+                <a href="@Url.Action("Institutions", "Home")" class="btn btn-outline-primary mt-auto">
+                    <i class="bi bi-arrow-right-circle me-2"></i>Keşfet
+                </a>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 text-center p-4 feature-card">
+                <div class="feature-icon mb-4" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                    <i class="bi bi-person-badge"></i>
+                </div>
+                <h5 class="fw-bold mb-3">Akademisyenler</h5>
+                <p class="text-muted mb-4">Akademisyenleri keşfedin ve ders materyallerine ulaşın.</p>
+                <a href="@Url.Action("Instructors", "Home")" class="btn btn-outline-primary mt-auto">
+                    <i class="bi bi-arrow-right-circle me-2"></i>Görüntüle
+                </a>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 text-center p-4 feature-card">
+                <div class="feature-icon mb-4" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+                    <i class="bi bi-book"></i>
+                </div>
+                <h5 class="fw-bold mb-3">Ders Materyalleri</h5>
+                <p class="text-muted mb-4">Binlerce ders materyaline kolayca erişin ve indirin.</p>
+                <div class="mt-auto">
+                    <span class="badge bg-primary px-4 py-2" style="font-size: 1rem;">
+                        <i class="bi bi-check-circle me-1"></i>@Model.Count() Aktif Ders
+                    </span>
+                </div>
+            </div>
+        </div>
     </div>
 
-    @if (Model.Any())
+    @if (User.Identity?.IsAuthenticated != true)
     {
-        <div class="row g-4">
-            @foreach (var course in Model)
-            {
-                <div class="col-md-6 col-lg-4">
-                    <div class="card course-card h-100">
-                        <div class="card-img-top d-flex align-items-center justify-content-center text-white" style="height: 180px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                            <div class="text-center">
-                                <h3 class="mb-0">@course.Code</h3>
-                                <small>@course.Credits Kredi</small>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title">@course.Name</h5>
-                            <p class="card-text text-muted small">
-                                @{
-                                    var desc = course.Description ?? "";
-                                    var shortDesc = desc.Length > 100 ? desc.Substring(0, 100) + "..." : desc;
-                                }
-                                @shortDesc
-                            </p>
-
-                            <div class="mb-2">
-                                <span class="badge bg-info text-dark">
-                                    <i class="bi bi-grid-3x3-gap"></i> @course.Category?.Name
-                                </span>
-                                @if (course.Semester != null)
-                                {
-                                    <span class="badge bg-secondary">@course.Semester @course.Year</span>
-                                }
-                            </div>
-
-                            <div class="d-flex align-items-center mb-3">
-                                <div class="instructor-avatar-small me-2">
-                                    @(course.Instructor?.FullName?.Substring(0, 1))
-                                </div>
-                                <div class="flex-grow-1">
-                                    <small class="d-block fw-bold">@course.Instructor?.FullName</small>
-                                    <small class="text-muted">@course.Instructor?.Department?.Name</small>
-                                </div>
-                            </div>
-
-                            <div class="d-flex justify-content-between text-muted small mb-3">
-                                <span><i class="bi bi-file-earmark-slides"></i> @course.Presentations.Count Materyal</span>
-                                <span><i class="bi bi-eye"></i> @course.Presentations.Sum(p => p.ViewCount) Görüntülenme</span>
-                            </div>
-                        </div>
-                        <div class="card-footer bg-transparent border-0">
-                            <a asp-action="Course" asp-route-id="@course.Id" class="btn btn-primary w-100">
-                                <i class="bi bi-arrow-right-circle"></i> Dersi Görüntüle
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            }
-        </div>
-    }
-    else
-    {
-        <div class="alert alert-info text-center">
-            <i class="bi bi-info-circle fs-1 d-block mb-3"></i>
-            <h5>Henüz ders bulunmuyor</h5>
-            <p class="mb-0">Arama kriterlerinize uygun ders bulunamadı. Lütfen farklı filtreler deneyin.</p>
+        <div class="card cta-card text-center p-5 shadow-lg">
+            <div class="mb-4">
+                <i class="bi bi-rocket-takeoff" style="font-size: 4rem; color: var(--primary-color);"></i>
+            </div>
+            <h3 class="fw-bold mb-3">Platformumuza Hoş Geldiniz</h3>
+            <p class="text-muted mb-4 fs-5">Ders materyallerine erişmek ve daha fazla özellikten yararlanmak için giriş yapın.</p>
+            <div class="d-flex gap-3 justify-content-center flex-wrap">
+                <a href="@Url.Action("Login", "Auth")" class="btn btn-primary btn-lg px-5">
+                    <i class="bi bi-box-arrow-in-right me-2"></i>Giriş Yap
+                </a>
+                <a href="@Url.Action("Register", "Auth")" class="btn btn-outline-primary btn-lg px-5">
+                    <i class="bi bi-person-plus me-2"></i>Kayıt Ol
+                </a>
+            </div>
         </div>
     }
 </div>
 
-@section Styles {
 <style>
-    .instructor-avatar-small {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-weight: bold;
-    }
-</style>
+.feature-card {
+    border: 1px solid transparent;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
+.feature-card:hover {
+    border-color: var(--primary-color);
+}
+
+.feature-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto;
+    border-radius: 1rem;
+    background: linear-gradient(135deg, var(--primary-color) 0%, #3b82f6 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    color: white;
+    box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3);
+}
+
+.cta-card {
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    border: 2px solid var(--gray-200);
+}
+</style>

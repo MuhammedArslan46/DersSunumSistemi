@@ -52,14 +52,19 @@ namespace DersSunumSistemi.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateUser(string userName, string email, string password, string fullName, UserRole role, int? departmentId, string? title)
+        public async Task<IActionResult> CreateUser(string userName, string email, string password, string fullName, UserRole role, int? departmentId, int? studentDepartmentId, string? title)
         {
-            var user = await _authService.RegisterAsync(userName, email, password, fullName, role);
+            // Öğrenci için bölüm ID'sini kullan
+            int? finalDepartmentId = role == UserRole.Student ? studentDepartmentId : null;
+
+            var user = await _authService.RegisterAsync(userName, email, password, fullName, role, finalDepartmentId);
 
             if (user == null)
             {
                 ViewBag.Error = "Kullanıcı adı veya email zaten kullanımda!";
-                ViewBag.Departments = await _context.Departments.ToListAsync();
+                ViewBag.Departments = await _context.Departments
+                    .Include(d => d.Faculty)
+                    .ToListAsync();
                 return View();
             }
 
@@ -79,6 +84,7 @@ namespace DersSunumSistemi.Controllers
                 await _context.SaveChangesAsync();
             }
 
+            TempData["Success"] = $"{fullName} başarıyla oluşturuldu!";
             return RedirectToAction(nameof(Users));
         }
 

@@ -12,6 +12,10 @@ namespace DersSunumSistemi.Models
         public DateTime CreatedDate { get; set; }
         public DateTime? LastLoginDate { get; set; }
 
+        // Öğrenci için bölüm bilgisi (Student ise zorunlu)
+        public int? DepartmentId { get; set; }
+        public Department? Department { get; set; }
+
         // İlişki: Eğer Instructor ise
         public Instructor? Instructor { get; set; }
     }

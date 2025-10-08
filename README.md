@@ -83,37 +83,82 @@ ApplicationDbContext.cs (Data Katmanı)
 ## Nasıl Çalıştırılır?
 
 ### Gereksinimler
-- .NET 8.0 SDK
-- SQL Server veya SQL Server Express
-- Visual Studio 2022 veya VS Code
+- .NET 8.0 SDK ([İndir](https://dotnet.microsoft.com/download/dotnet/8.0))
+- SQL Server veya SQL Server Express ([İndir](https://www.microsoft.com/sql-server/sql-server-downloads))
+- Visual Studio 2022 veya VS Code (opsiyonel)
 
 ### Adımlar
 
-1. **Projeyi Klonlayın**
+#### 1. Projeyi İndirin/Klonlayın
 ```bash
-git clone https://github.com/MuhammedArslan46/DersSunumSistemi.git
-cd DersSunumSistemi
+git clone [proje-url]
+cd DersProjesi
 ```
 
-2. **Veritabanını Oluşturun**
+#### 2. Veritabanı Bağlantısını Yapılandırın
+
+`DersSunumSistemi/appsettings.json` dosyasını açın ve connection string'i kendi SQL Server ayarlarınıza göre düzenleyin:
+
+```json
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=.\\SQLEXPRESS;Database=DersSunumDB;Integrated Security=True;MultipleActiveResultSets=true;TrustServerCertificate=True"
+  }
+}
+```
+
+**Notlar:**
+- `Server=.\\SQLEXPRESS` - SQL Server instance adınızı buraya yazın
+- Farklı bir instance kullanıyorsanız (örn: `Server=localhost` veya `Server=.\MSSQLSERVER`)
+- Windows Authentication yerine SQL Server Authentication kullanmak için:
+  ```
+  Server=.\\SQLEXPRESS;Database=DersSunumDB;User Id=sa;Password=SİFRENİZ;TrustServerCertificate=True
+  ```
+
+#### 3. Bağımlılıkları Yükleyin
 ```bash
 cd DersSunumSistemi
+dotnet restore
+```
+
+#### 4. Veritabanını Oluşturun ve Migration'ları Uygulayın
+```bash
 dotnet ef database update
 ```
 
-3. **Uygulamayı Çalıştırın**
+Bu komut:
+- DersSunumDB veritabanını otomatik oluşturur
+- Tüm tabloları (Users, Institutions, Faculties, Departments, Courses, Presentations, vb.) oluşturur
+- Örnek verileri ekler (kurum, fakülte, bölüm ve test kullanıcıları)
+
+#### 5. Uygulamayı Çalıştırın
 ```bash
 dotnet run
 ```
 
-4. **Tarayıcıda Açın**
+#### 6. Tarayıcıda Açın
 ```
 http://localhost:5178
 ```
 
-### İlk Admin Girişi
+### Varsayılan Test Kullanıcıları
+
+Sistem otomatik olarak aşağıdaki kullanıcıları oluşturur:
+
+#### Admin
 - **Kullanıcı Adı**: admin
 - **Şifre**: admin123
+- **Yetki**: Sistem yöneticisi
+
+#### Öğretim Üyeleri
+- **Kullanıcı Adı**: instructor1
+- **Şifre**: instructor123
+- **Yetki**: Ders ve sunum yönetimi
+
+#### Öğrenciler
+- **Kullanıcı Adı**: student1
+- **Şifre**: student123
+- **Yetki**: Dersleri görüntüleme (kendi bölümü)
 
 ## Projenin Teknik Detayları
 
@@ -219,10 +264,90 @@ builder.Services.AddSession();
 app.UseSession();
 ```
 
+## Sorun Giderme
+
+### Hata: "Connection could not be established"
+
+**Çözüm 1:** SQL Server'ın çalıştığından emin olun
+```bash
+# Windows'ta SQL Server servisini kontrol edin
+services.msc
+# "SQL Server (SQLEXPRESS)" servisinin çalıştığını kontrol edin
+```
+
+**Çözüm 2:** Connection string'i kontrol edin
+- SQL Server Management Studio (SSMS) ile bağlanmayı deneyin
+- Server name'i doğrulayın (`.\\SQLEXPRESS`, `localhost`, `(localdb)\\MSSQLLocalDB`, vb.)
+
+**Çözüm 3:** SQL Server Authentication kullanıyorsanız şifreyi kontrol edin
+
+### Hata: "A network-related or instance-specific error"
+
+- SQL Server Browser servisinin çalıştığından emin olun
+- TCP/IP protokolünün aktif olduğunu kontrol edin (SQL Server Configuration Manager)
+- Firewall ayarlarını kontrol edin
+
+### Hata: "dotnet ef komutu bulunamadı"
+
+```bash
+# EF Core tools'u global olarak yükleyin
+dotnet tool install --global dotnet-ef
+
+# Veya güncelleyin
+dotnet tool update --global dotnet-ef
+```
+
+### Migration Hataları
+
+Eğer migration'larda sorun yaşıyorsanız:
+
+```bash
+# Veritabanını sıfırlayın
+dotnet ef database drop --force
+
+# Migration'ları yeniden uygulayın
+dotnet ef database update
+```
+
+### Port Çakışması (Port 5178 kullanımda)
+
+`DersSunumSistemi/Properties/launchSettings.json` dosyasından port numarasını değiştirebilirsiniz.
+
+## Geliştirme İçin Notlar
+
+### Yeni Migration Oluşturma
+
+```bash
+# Model değişikliklerinden sonra
+dotnet ef migrations add MigrationAdi
+
+# Migration'ı uygula
+dotnet ef database update
+```
+
+### Watch Mode ile Çalıştırma
+
+Geliştirme sırasında otomatik yeniden başlatma için:
+
+```bash
+dotnet watch run
+```
+
+### Veritabanını Sıfırlama
+
+```bash
+# Veritabanını tamamen sil
+dotnet ef database drop
+
+# Yeniden oluştur
+dotnet ef database update
+```
+
 ## Geliştirme Fikirleri
 
-- [ ] Kullanıcı kayıt sistemi
-- [ ] Öğrenci ve öğretmen rolleri
+- [x] Kullanıcı kayıt sistemi
+- [x] Öğrenci ve öğretmen rolleri
+- [x] Bölüm bazlı ders filtreleme
 - [ ] Sunum dosyalarına yorum yapabilme
 - [ ] Arama ve filtreleme özellikleri
 - [ ] Responsive tasarım iyileştirmeleri

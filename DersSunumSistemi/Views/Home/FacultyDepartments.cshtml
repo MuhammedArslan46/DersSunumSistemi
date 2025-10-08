@@ -1,0 +1,96 @@
+@model DersSunumSistemi.Models.Faculty
+
+@{
+    ViewData["Title"] = Model.Name + " - Bölümler";
+}
+
+<div class="container mt-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="Institutions">Kurumlar</a></li>
+            <li class="breadcrumb-item"><a asp-action="InstitutionFaculties" asp-route-id="@Model.InstitutionId">@Model.Institution?.Name</a></li>
+            <li class="breadcrumb-item active">@Model.Name</li>
+        </ol>
+    </nav>
+
+    <!-- Başlık -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="fw-bold">
+                <i class="bi bi-mortarboard-fill"></i> @Model.Name
+            </h2>
+            @if (!string.IsNullOrWhiteSpace(Model.Description))
+            {
+                <p class="text-muted">@Model.Description</p>
+            }
+            <span class="badge bg-primary">@Model.Code</span>
+            <hr>
+        </div>
+    </div>
+
+    <!-- Bölümler Listesi -->
+    @if (Model.Departments.Any())
+    {
+        <h4 class="mb-3">
+            <i class="bi bi-diagram-3"></i> Bölümler
+            <span class="badge bg-secondary">@Model.Departments.Count</span>
+        </h4>
+
+        <div class="list-group">
+            @foreach (var department in Model.Departments.OrderBy(d => d.Name))
+            {
+                var instructorCount = department.Instructors.Count;
+                var courseCount = department.Instructors.SelectMany(i => i.Courses).Count();
+
+                <a asp-action="DepartmentInstructors" asp-route-id="@department.Id"
+                   class="list-group-item list-group-item-action py-3">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h5 class="mb-1">
+                                <i class="bi bi-diagram-3 text-primary"></i> @department.Name
+                            </h5>
+                            <small class="text-muted">Kod: @department.Code</small>
+                            @if (!string.IsNullOrWhiteSpace(department.Description))
+                            {
+                                <br><small class="text-muted">@department.Description</small>
+                            }
+                            <div class="mt-2">
+                                <span class="badge bg-light text-dark me-1">
+                                    <i class="bi bi-person"></i> @instructorCount Akademisyen
+                                </span>
+                                <span class="badge bg-light text-dark">
+                                    <i class="bi bi-book"></i> @courseCount Ders
+                                </span>
+                            </div>
+                        </div>
+                        <div>
+                            <i class="bi bi-chevron-right"></i>
+                        </div>
+                    </div>
+                </a>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle"></i> Bu fakülteye ait henüz bölüm bulunmuyor.
+        </div>
+    }
+</div>
+
+@section Styles {
+<style>
+    .list-group-item {
+        border-left: 4px solid transparent;
+        transition: all 0.2s ease;
+    }
+
+    .list-group-item:hover {
+        border-left-color: #0d6efd;
+        background-color: #f8f9fa;
+        transform: translateX(5px);
+    }
+</style>
+}

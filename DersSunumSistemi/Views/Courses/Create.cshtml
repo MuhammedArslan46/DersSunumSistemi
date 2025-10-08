@@ -30,9 +30,17 @@
                         </div>
 
                         <div class="mb-3">
-                            <label asp-for="Instructor" class="form-label">Eğitmen</label>
-                            <input asp-for="Instructor" class="form-control" placeholder="Örn: Prof. Dr. Ahmet Yılmaz" />
-                            <span asp-validation-for="Instructor" class="text-danger"></span>
+                            <label asp-for="DepartmentId" class="form-label">Bölüm</label>
+                            <select asp-for="DepartmentId" class="form-select" asp-items="ViewBag.Departments">
+                                <option value="">-- Bölüm Seçiniz --</option>
+                            </select>
+                            <span asp-validation-for="DepartmentId" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="InstructorId" class="form-label">Eğitmen ID</label>
+                            <input asp-for="InstructorId" class="form-control" type="number" />
+                            <span asp-validation-for="InstructorId" class="text-danger"></span>
                         </div>
 
                         <div class="mb-3">

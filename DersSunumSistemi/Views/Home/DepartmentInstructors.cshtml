@@ -1,0 +1,145 @@
+@model DersSunumSistemi.Models.Department
+
+@{
+    ViewData["Title"] = Model.Name + " - Akademisyenler ve Dersler";
+}
+
+<div class="container mt-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="Institutions">Kurumlar</a></li>
+            <li class="breadcrumb-item"><a asp-action="InstitutionFaculties" asp-route-id="@Model.Faculty?.InstitutionId">@Model.Faculty?.Institution?.Name</a></li>
+            <li class="breadcrumb-item"><a asp-action="FacultyDepartments" asp-route-id="@Model.FacultyId">@Model.Faculty?.Name</a></li>
+            <li class="breadcrumb-item active">@Model.Name</li>
+        </ol>
+    </nav>
+
+    <!-- Başlık -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="fw-bold">
+                <i class="bi bi-diagram-3-fill"></i> @Model.Name
+            </h2>
+            @if (!string.IsNullOrWhiteSpace(Model.Description))
+            {
+                <p class="text-muted">@Model.Description</p>
+            }
+            <span class="badge bg-primary">@Model.Code</span>
+            <hr>
+        </div>
+    </div>
+
+    <!-- Akademisyenler ve Dersler -->
+    @if (Model.Instructors.Any())
+    {
+        <h4 class="mb-3">
+            <i class="bi bi-people-fill"></i> Akademisyenler ve Dersleri
+            <span class="badge bg-secondary">@Model.Instructors.Count Akademisyen</span>
+        </h4>
+
+        @foreach (var instructor in Model.Instructors.OrderBy(i => i.FullName))
+        {
+            var activeCourses = instructor.Courses.Where(c => c.IsActive).ToList();
+
+            <div class="card mb-3">
+                <div class="card-header bg-light">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h5 class="mb-0">
+                                <i class="bi bi-person-circle text-primary"></i>
+                                @if (!string.IsNullOrWhiteSpace(instructor.Title))
+                                {
+                                    <span>@instructor.Title </span>
+                                }
+                                @instructor.FullName
+                            </h5>
+                            <small class="text-muted">
+                                <i class="bi bi-envelope"></i> @instructor.Email
+                                @if (!string.IsNullOrWhiteSpace(instructor.Phone))
+                                {
+                                    <span class="ms-3"><i class="bi bi-telephone"></i> @instructor.Phone</span>
+                                }
+                            </small>
+                        </div>
+                        <span class="badge bg-primary">@activeCourses.Count Ders</span>
+                    </div>
+                </div>
+
+                @if (activeCourses.Any())
+                {
+                    <div class="card-body">
+                        <h6 class="mb-3"><i class="bi bi-book"></i> Dersler:</h6>
+                        <div class="list-group">
+                            @foreach (var course in activeCourses.OrderBy(c => c.Code))
+                            {
+                                <a asp-action="Course" asp-route-id="@course.Id"
+                                   class="list-group-item list-group-item-action">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div class="flex-grow-1">
+                                            <h6 class="mb-1">@course.Name</h6>
+                                            <small class="text-muted">Kod: @course.Code | Kredi: @course.Credits</small>
+                                            @if (!string.IsNullOrWhiteSpace(course.Description))
+                                            {
+                                                <br>
+                                                <small class="text-muted">
+                                                    @{
+                                                        var desc = course.Description;
+                                                        var shortDesc = desc.Length > 100 ? desc.Substring(0, 100) + "..." : desc;
+                                                    }
+                                                    @shortDesc
+                                                </small>
+                                            }
+                                            <div class="mt-2">
+                                                <span class="badge bg-light text-dark">
+                                                    <i class="bi bi-file-earmark-slides"></i> @course.Presentations.Count(p => p.IsPublished) Materyal
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="ms-2">
+                                            <i class="bi bi-chevron-right"></i>
+                                        </div>
+                                    </div>
+                                </a>
+                            }
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="card-body">
+                        <p class="text-muted mb-0">
+                            <i class="bi bi-info-circle"></i> Bu akademisyene ait aktif ders bulunmamaktadır.
+                        </p>
+                    </div>
+                }
+            </div>
+        }
+    }
+    else
+    {
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle"></i> Bu bölüme ait henüz akademisyen bulunmuyor.
+        </div>
+    }
+</div>
+
+@section Styles {
+<style>
+    .list-group-item {
+        border-left: 4px solid transparent;
+        transition: all 0.2s ease;
+    }
+
+    .list-group-item:hover {
+        border-left-color: #0d6efd;
+        background-color: #f8f9fa;
+        transform: translateX(5px);
+    }
+
+    .card {
+        border: none;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+</style>
+}

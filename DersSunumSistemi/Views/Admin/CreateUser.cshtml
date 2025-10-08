@@ -43,12 +43,30 @@
 
                         <div class="mb-3">
                             <label for="role" class="form-label">Rol</label>
-                            <select class="form-select" id="role" name="role" required onchange="toggleInstructorFields()">
+                            <select class="form-select" id="role" name="role" required onchange="toggleDepartmentFields()">
                                 <option value="">Rol Seçin</option>
                                 <option value="3">Öğrenci</option>
                                 <option value="2">Akademisyen</option>
                                 <option value="1">Admin</option>
                             </select>
+                        </div>
+
+                        <div id="studentFields" style="display: none;">
+                            <div class="alert alert-info">
+                                <i class="bi bi-info-circle me-2"></i>
+                                Öğrenci bölüm bilgisi (zorunlu)
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="studentDepartmentId" class="form-label">Öğrenci Bölümü *</label>
+                                <select class="form-select" id="studentDepartmentId" name="studentDepartmentId">
+                                    <option value="">Bölüm Seçin</option>
+                                    @foreach (var dept in ViewBag.Departments as List<DersSunumSistemi.Models.Department>)
+                                    {
+                                        <option value="@dept.Id">@dept.Name - @dept.Faculty?.Name</option>
+                                    }
+                                </select>
+                            </div>
                         </div>
 
                         <div id="instructorFields" style="display: none;">
@@ -92,17 +110,25 @@
 
 @section Scripts {
 <script>
-    function toggleInstructorFields() {
+    function toggleDepartmentFields() {
         const role = document.getElementById('role').value;
+        const studentFields = document.getElementById('studentFields');
         const instructorFields = document.getElementById('instructorFields');
+        const studentDepartmentId = document.getElementById('studentDepartmentId');
         const departmentId = document.getElementById('departmentId');
 
-        if (role === '2') { // Instructor
+        // Reset all
+        studentFields.style.display = 'none';
+        instructorFields.style.display = 'none';
+        studentDepartmentId.required = false;
+        departmentId.required = false;
+
+        if (role === '3') { // Student
+            studentFields.style.display = 'block';
+            studentDepartmentId.required = true;
+        } else if (role === '2') { // Instructor
             instructorFields.style.display = 'block';
             departmentId.required = true;
-        } else {
-            instructorFields.style.display = 'none';
-            departmentId.required = false;
         }
     }
 </script>

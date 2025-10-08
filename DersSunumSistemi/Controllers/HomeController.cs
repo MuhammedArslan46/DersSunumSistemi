@@ -28,6 +28,23 @@ public class HomeController : Controller
             .Include(c => c.Presentations)
             .Where(c => c.IsActive);
 
+        // Eğer kullanıcı öğrenci ise, sadece kendi bölümünün derslerini göster
+        if (User.Identity?.IsAuthenticated == true)
+        {
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (int.TryParse(userIdClaim, out int userId))
+            {
+                var user = await _context.Users
+                    .FirstOrDefaultAsync(u => u.Id == userId);
+
+                if (user != null && user.Role == UserRole.Student && user.DepartmentId.HasValue)
+                {
+                    // Öğrenci sadece kendi bölümünün derslerini görebilir
+                    coursesQuery = coursesQuery.Where(c => c.Instructor!.DepartmentId == user.DepartmentId.Value);
+                }
+            }
+        }
+
         // Arama filtresi
         if (!string.IsNullOrWhiteSpace(search))
         {
@@ -86,6 +103,61 @@ public class HomeController : Controller
             return NotFound();
 
         return View(category);
+    }
+
+    public async Task<IActionResult> Institutions()
+    {
+        var institutions = await _context.Institutions
+            .Include(i => i.Faculties)
+            .OrderBy(i => i.Type)
+            .ThenBy(i => i.Name)
+            .ToListAsync();
+
+        return View(institutions);
+    }
+
+    public async Task<IActionResult> InstitutionFaculties(int id)
+    {
+        var institution = await _context.Institutions
+            .Include(i => i.Faculties)
+            .ThenInclude(f => f.Departments)
+            .FirstOrDefaultAsync(i => i.Id == id);
+
+        if (institution == null)
+            return NotFound();
+
+        return View(institution);
+    }
+
+    public async Task<IActionResult> FacultyDepartments(int id)
+    {
+        var faculty = await _context.Faculties
+            .Include(f => f.Institution)
+            .Include(f => f.Departments)
+            .ThenInclude(d => d.Instructors)
+            .ThenInclude(i => i.Courses.Where(c => c.IsActive))
+            .FirstOrDefaultAsync(f => f.Id == id);
+
+        if (faculty == null)
+            return NotFound();
+
+        return View(faculty);
+    }
+
+    public async Task<IActionResult> DepartmentInstructors(int id)
+    {
+        var department = await _context.Departments
+            .Include(d => d.Faculty)
+            .ThenInclude(f => f!.Institution)
+            .Include(d => d.Instructors)
+            .ThenInclude(i => i.Courses.Where(c => c.IsActive))
+            .ThenInclude(c => c.Presentations.Where(p => p.IsPublished))
+            .FirstOrDefaultAsync(d => d.Id == id);
+
+        if (department == null)
+            return NotFound();
+
+        return View(department);
     }
 
     public async Task<IActionResult> Departments()
@@ -202,5 +274,50 @@ public class HomeController : Controller
     public IActionResult Error()
     {
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+    }
+
+    // API Endpoints for Navigation Menu
+    [HttpGet]
+    public async Task<IActionResult> GetInstitutionsMenu()
+    {
+        var institutions = await _context.Institutions
+            .Include(i => i.Faculties)
+            .OrderBy(i => i.Type)
+            .ThenBy(i => i.Name)
+            .Select(i => new
+            {
+                i.Id,
+                i.Name,
+                i.Type,
+                Faculties = i.Faculties.Select(f => new
+                {
+                    f.Id,
+                    f.Name
+                }).ToList()
+            })
+            .ToListAsync();
+
+        return Json(institutions);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetFacultyDepartmentsMenu(int facultyId)
+    {
+        var faculty = await _context.Faculties
+            .Include(f => f.Departments)
+            .Where(f => f.Id == facultyId)
+            .Select(f => new
+            {
+                f.Id,
+                f.Name,
+                Departments = f.Departments.Select(d => new
+                {
+                    d.Id,
+                    d.Name
+                }).ToList()
+            })
+            .FirstOrDefaultAsync();
+
+        return Json(faculty);
     }
 }

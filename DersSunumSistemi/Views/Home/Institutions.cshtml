@@ -1,0 +1,137 @@
+@model IEnumerable<DersSunumSistemi.Models.Institution>
+
+@{
+    ViewData["Title"] = "Kurumlar";
+}
+
+<div class="container mt-4">
+    <!-- Başlık -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="fw-bold">
+                <i class="bi bi-building"></i> Akademik Kurumlar
+            </h2>
+            <p class="text-muted">Fakülteleri, bölümleri ve dersleri görüntülemek için kurum seçiniz</p>
+            <hr>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Fakülteler -->
+        @{
+            var faculties = Model.Where(i => i.Type == DersSunumSistemi.Models.InstitutionType.Faculty).ToList();
+            if (faculties.Any())
+            {
+                <div class="col-12 mb-4">
+                    <h4 class="mb-3 text-primary">
+                        <i class="bi bi-mortarboard-fill"></i> Fakülteler
+                    </h4>
+                    <div class="list-group mb-4">
+                        @foreach (var institution in faculties.OrderBy(x => x.Name))
+                        {
+                            <a asp-action="InstitutionFaculties" asp-route-id="@institution.Id"
+                               class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-3">
+                                <div>
+                                    <h5 class="mb-1">
+                                        <i class="bi bi-building text-primary"></i> @institution.Name
+                                    </h5>
+                                    <small class="text-muted">@(institution.Description ?? "Fakülte hakkında bilgi")</small>
+                                </div>
+                                <div>
+                                    <span class="badge bg-primary rounded-pill me-2">@institution.Faculties.Count Bölüm</span>
+                                    <i class="bi bi-chevron-right"></i>
+                                </div>
+                            </a>
+                        }
+                    </div>
+                </div>
+            }
+        }
+
+        <!-- Meslek Yüksekokulları -->
+        @{
+            var vocationalSchools = Model.Where(i => i.Type == DersSunumSistemi.Models.InstitutionType.VocationalSchool).ToList();
+            if (vocationalSchools.Any())
+            {
+                <div class="col-12 mb-4">
+                    <h4 class="mb-3 text-success">
+                        <i class="bi bi-briefcase-fill"></i> Meslek Yüksekokulları
+                    </h4>
+                    <div class="list-group mb-4">
+                        @foreach (var institution in vocationalSchools.OrderBy(x => x.Name))
+                        {
+                            <a asp-action="InstitutionFaculties" asp-route-id="@institution.Id"
+                               class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-3">
+                                <div>
+                                    <h5 class="mb-1">
+                                        <i class="bi bi-briefcase text-success"></i> @institution.Name
+                                    </h5>
+                                    <small class="text-muted">@(institution.Description ?? "Meslek yüksekokulu hakkında bilgi")</small>
+                                </div>
+                                <div>
+                                    <span class="badge bg-success rounded-pill me-2">@institution.Faculties.Count Bölüm</span>
+                                    <i class="bi bi-chevron-right"></i>
+                                </div>
+                            </a>
+                        }
+                    </div>
+                </div>
+            }
+        }
+
+        <!-- Yüksekokullar -->
+        @{
+            var higherSchools = Model.Where(i => i.Type == DersSunumSistemi.Models.InstitutionType.HigherSchool).ToList();
+            if (higherSchools.Any())
+            {
+                <div class="col-12 mb-4">
+                    <h4 class="mb-3 text-info">
+                        <i class="bi bi-bank2"></i> Yüksekokullar
+                    </h4>
+                    <div class="list-group mb-4">
+                        @foreach (var institution in higherSchools.OrderBy(x => x.Name))
+                        {
+                            <a asp-action="InstitutionFaculties" asp-route-id="@institution.Id"
+                               class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-3">
+                                <div>
+                                    <h5 class="mb-1">
+                                        <i class="bi bi-bank text-info"></i> @institution.Name
+                                    </h5>
+                                    <small class="text-muted">@(institution.Description ?? "Yüksekokul hakkında bilgi")</small>
+                                </div>
+                                <div>
+                                    <span class="badge bg-info rounded-pill me-2">@institution.Faculties.Count Bölüm</span>
+                                    <i class="bi bi-chevron-right"></i>
+                                </div>
+                            </a>
+                        }
+                    </div>
+                </div>
+            }
+        }
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info text-center">
+            <i class="bi bi-info-circle fs-1 d-block mb-3"></i>
+            <h5>Henüz kurum bulunmuyor</h5>
+            <p class="mb-0">Sistemde henüz tanımlı kurum bulunmamaktadır.</p>
+        </div>
+    }
+</div>
+
+@section Styles {
+<style>
+    .list-group-item {
+        border-left: 4px solid transparent;
+        transition: all 0.2s ease;
+    }
+
+    .list-group-item:hover {
+        border-left-color: #0d6efd;
+        background-color: #f8f9fa;
+        transform: translateX(5px);
+    }
+</style>
+}
