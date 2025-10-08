@@ -10,6 +10,14 @@
                     <h4 class="mb-0"><i class="bi bi-plus-circle"></i> Yeni Ders Ekle</h4>
                 </div>
                 <div class="card-body">
+                    @if (TempData["Error"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>@TempData["Error"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
                     <form method="post" asp-action="CreateCourse">
                         <div class="row">
                             <div class="col-md-8 mb-3">

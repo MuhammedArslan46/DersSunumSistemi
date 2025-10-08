@@ -12,6 +12,14 @@
                     <p class="text-muted mb-0">Ders: @course.Name (@course.Code)</p>
                 </div>
                 <div class="card-body">
+                    @if (TempData["Error"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>@TempData["Error"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
                     <form method="post" asp-action="CreatePresentation" asp-route-courseId="@course.Id" enctype="multipart/form-data">
                         <div class="mb-3">
                             <label for="title" class="form-label">Materyal Başlığı</label>

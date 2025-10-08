@@ -13,51 +13,64 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
         <div class="container-fluid">
-            <a class="navbar-brand d-flex align-items-center" asp-controller="Home" asp-action="Index">
-                <i class="bi bi-mortarboard-fill fs-4 me-2"></i>
-                <span class="fw-bold">Lisansüstü Ders Platformu</span>
-            </a>
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <a class="navbar-brand d-flex align-items-center" asp-controller="Home" asp-action="Index">
+                    <i class="bi bi-mortarboard-fill fs-4 me-2"></i>
+                    <span class="fw-bold">Lisansüstü Ders Platformu</span>
+                </a>
+            }
+            else
+            {
+                <a class="navbar-brand d-flex align-items-center" asp-controller="Auth" asp-action="Login">
+                    <i class="bi bi-mortarboard-fill fs-4 me-2"></i>
+                    <span class="fw-bold">Lisansüstü Ders Platformu</span>
+                </a>
+            }
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" asp-controller="Home" asp-action="Index">
-                            <i class="bi bi-house-door"></i> Ana Sayfa
-                        </a>
-                    </li>
-                    <li class="nav-item position-static" id="institutionsDropdown">
-                        <a class="nav-link" href="#" id="institutionsToggle">
-                            <i class="bi bi-building"></i> Kurumlar <i class="bi bi-chevron-down ms-1"></i>
-                        </a>
-                        <div class="mega-menu-container" id="institutionsMegaMenu" style="display: none;">
-                            <div class="mega-menu-content">
-                                <div class="d-flex">
-                                    <div class="institutions-list border-end" style="width: 350px; max-height: 500px; overflow-y: auto;">
-                                        <div class="p-3 text-center">
-                                            <div class="spinner-border spinner-border-sm text-primary" role="status">
-                                                <span class="visually-hidden">Yükleniyor...</span>
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Home" asp-action="Index">
+                                <i class="bi bi-house-door"></i> Ana Sayfa
+                            </a>
+                        </li>
+                        <li class="nav-item position-static" id="institutionsDropdown">
+                            <a class="nav-link" href="#" id="institutionsToggle">
+                                <i class="bi bi-building"></i> Kurumlar <i class="bi bi-chevron-down ms-1"></i>
+                            </a>
+                            <div class="mega-menu-container" id="institutionsMegaMenu" style="display: none;">
+                                <div class="mega-menu-content">
+                                    <div class="d-flex">
+                                        <div class="institutions-list border-end" style="width: 350px; max-height: 500px; overflow-y: auto;">
+                                            <div class="p-3 text-center">
+                                                <div class="spinner-border spinner-border-sm text-primary" role="status">
+                                                    <span class="visually-hidden">Yükleniyor...</span>
+                                                </div>
+                                                <span class="ms-2">Kurumlar yükleniyor...</span>
                                             </div>
-                                            <span class="ms-2">Kurumlar yükleniyor...</span>
                                         </div>
-                                    </div>
-                                    <div class="faculties-list" style="width: 350px; max-height: 500px; overflow-y: auto;">
-                                        <div class="p-4 text-center text-muted">
-                                            <i class="bi bi-arrow-left-circle fs-3 d-block mb-2"></i>
-                                            <small>Bir kurum seçin</small>
+                                        <div class="faculties-list" style="width: 350px; max-height: 500px; overflow-y: auto;">
+                                            <div class="p-4 text-center text-muted">
+                                                <i class="bi bi-arrow-left-circle fs-3 d-block mb-2"></i>
+                                                <small>Bir kurum seçin</small>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" asp-controller="Home" asp-action="Instructors">
-                            <i class="bi bi-person-badge"></i> Akademisyenler
-                        </a>
-                    </li>
-                </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Home" asp-action="Instructors">
+                                <i class="bi bi-person-badge"></i> Akademisyenler
+                            </a>
+                        </li>
+                    </ul>
+                }
 
                 @if (User.Identity?.IsAuthenticated == true)
                 {

@@ -56,7 +56,7 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Auth}/{action=Login}/{id?}");
 
 // İlk admin kullanıcısı ve örnek verileri oluştur
 using (var scope = app.Services.CreateScope())

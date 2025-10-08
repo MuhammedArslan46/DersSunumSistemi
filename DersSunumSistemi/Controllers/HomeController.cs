@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using DersSunumSistemi.Models;
 using DersSunumSistemi.Data;
@@ -19,6 +20,7 @@ public class HomeController : Controller
         _environment = environment;
     }
 
+    [Authorize]
     public async Task<IActionResult> Index(string? search, int? categoryId, int? departmentId)
     {
         var coursesQuery = _context.Courses
@@ -80,6 +82,7 @@ public class HomeController : Controller
         return View(courses);
     }
 
+    [Authorize]
     public async Task<IActionResult> Categories()
     {
         var categories = await _context.Categories
@@ -89,6 +92,7 @@ public class HomeController : Controller
         return View(categories);
     }
 
+    [Authorize]
     public async Task<IActionResult> Category(int id)
     {
         var category = await _context.Categories
@@ -105,6 +109,7 @@ public class HomeController : Controller
         return View(category);
     }
 
+    [Authorize]
     public async Task<IActionResult> Institutions()
     {
         var institutions = await _context.Institutions
@@ -116,6 +121,7 @@ public class HomeController : Controller
         return View(institutions);
     }
 
+    [Authorize]
     public async Task<IActionResult> InstitutionFaculties(int id)
     {
         var institution = await _context.Institutions
@@ -129,6 +135,7 @@ public class HomeController : Controller
         return View(institution);
     }
 
+    [Authorize]
     public async Task<IActionResult> FacultyDepartments(int id)
     {
         var faculty = await _context.Faculties
@@ -144,6 +151,7 @@ public class HomeController : Controller
         return View(faculty);
     }
 
+    [Authorize]
     public async Task<IActionResult> DepartmentInstructors(int id)
     {
         var department = await _context.Departments
@@ -160,6 +168,7 @@ public class HomeController : Controller
         return View(department);
     }
 
+    [Authorize]
     public async Task<IActionResult> Departments()
     {
         var departments = await _context.Departments
@@ -170,6 +179,7 @@ public class HomeController : Controller
         return View(departments);
     }
 
+    [Authorize]
     public async Task<IActionResult> Department(int id)
     {
         var department = await _context.Departments
@@ -184,6 +194,7 @@ public class HomeController : Controller
         return View(department);
     }
 
+    [Authorize]
     public async Task<IActionResult> Instructors()
     {
         var instructors = await _context.Instructors
@@ -196,6 +207,7 @@ public class HomeController : Controller
         return View(instructors);
     }
 
+    [Authorize]
     public async Task<IActionResult> Instructor(int id)
     {
         var instructor = await _context.Instructors
@@ -212,6 +224,7 @@ public class HomeController : Controller
         return View(instructor);
     }
 
+    [Authorize]
     public async Task<IActionResult> Course(int id)
     {
         var course = await _context.Courses
@@ -227,6 +240,7 @@ public class HomeController : Controller
         return View(course);
     }
 
+    [Authorize]
     public async Task<IActionResult> Presentation(int id)
     {
         var presentation = await _context.Presentations
@@ -244,6 +258,7 @@ public class HomeController : Controller
         return View(presentation);
     }
 
+    [Authorize]
     public async Task<IActionResult> Download(int id)
     {
         var presentation = await _context.Presentations
@@ -277,6 +292,7 @@ public class HomeController : Controller
     }
 
     // API Endpoints for Navigation Menu
+    [Authorize]
     [HttpGet]
     public async Task<IActionResult> GetInstitutionsMenu()
     {
@@ -300,6 +316,7 @@ public class HomeController : Controller
         return Json(institutions);
     }
 
+    [Authorize]
     [HttpGet]
     public async Task<IActionResult> GetFacultyDepartmentsMenu(int facultyId)
     {

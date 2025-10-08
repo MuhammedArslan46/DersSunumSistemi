@@ -80,14 +80,47 @@ namespace DersSunumSistemi.Controllers
             var instructor = await GetCurrentInstructor();
             if (instructor == null) return NotFound();
 
-            model.InstructorId = instructor.Id;
-            model.CreatedDate = DateTime.Now;
-            model.IsActive = true;
+            try
+            {
+                // Model validation
+                if (string.IsNullOrWhiteSpace(model.Name))
+                {
+                    TempData["Error"] = "Ders adı zorunludur.";
+                    ViewBag.Categories = await _context.Categories.ToListAsync();
+                    return View(model);
+                }
 
-            _context.Courses.Add(model);
-            await _context.SaveChangesAsync();
+                if (string.IsNullOrWhiteSpace(model.Code))
+                {
+                    TempData["Error"] = "Ders kodu zorunludur.";
+                    ViewBag.Categories = await _context.Categories.ToListAsync();
+                    return View(model);
+                }
 
-            return RedirectToAction(nameof(MyCourses));
+                if (model.CategoryId == 0)
+                {
+                    TempData["Error"] = "Kategori seçimi zorunludur.";
+                    ViewBag.Categories = await _context.Categories.ToListAsync();
+                    return View(model);
+                }
+
+                model.InstructorId = instructor.Id;
+                model.DepartmentId = instructor.DepartmentId;
+                model.CreatedDate = DateTime.Now;
+                model.IsActive = true;
+
+                _context.Courses.Add(model);
+                await _context.SaveChangesAsync();
+
+                TempData["Success"] = "Ders başarıyla oluşturuldu.";
+                return RedirectToAction(nameof(MyCourses));
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Ders oluşturulurken bir hata oluştu: " + ex.Message;
+                ViewBag.Categories = await _context.Categories.ToListAsync();
+                return View(model);
+            }
         }
 
         [HttpGet]
@@ -116,20 +149,52 @@ namespace DersSunumSistemi.Controllers
 
             if (course == null) return NotFound();
 
-            course.Name = model.Name;
-            course.Code = model.Code;
-            course.Description = model.Description;
-            course.Syllabus = model.Syllabus;
-            course.Credits = model.Credits;
-            course.Semester = model.Semester;
-            course.Year = model.Year;
-            course.CategoryId = model.CategoryId;
-            course.IsActive = model.IsActive;
-            course.UpdatedDate = DateTime.Now;
+            try
+            {
+                // Model validation
+                if (string.IsNullOrWhiteSpace(model.Name))
+                {
+                    TempData["Error"] = "Ders adı zorunludur.";
+                    ViewBag.Categories = await _context.Categories.ToListAsync();
+                    return View(course);
+                }
 
-            await _context.SaveChangesAsync();
+                if (string.IsNullOrWhiteSpace(model.Code))
+                {
+                    TempData["Error"] = "Ders kodu zorunludur.";
+                    ViewBag.Categories = await _context.Categories.ToListAsync();
+                    return View(course);
+                }
 
-            return RedirectToAction(nameof(MyCourses));
+                if (model.CategoryId == 0)
+                {
+                    TempData["Error"] = "Kategori seçimi zorunludur.";
+                    ViewBag.Categories = await _context.Categories.ToListAsync();
+                    return View(course);
+                }
+
+                course.Name = model.Name;
+                course.Code = model.Code;
+                course.Description = model.Description;
+                course.Syllabus = model.Syllabus;
+                course.Credits = model.Credits;
+                course.Semester = model.Semester;
+                course.Year = model.Year;
+                course.CategoryId = model.CategoryId;
+                course.IsActive = model.IsActive;
+                course.UpdatedDate = DateTime.Now;
+
+                await _context.SaveChangesAsync();
+
+                TempData["Success"] = "Ders başarıyla güncellendi.";
+                return RedirectToAction(nameof(MyCourses));
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Ders güncellenirken bir hata oluştu: " + ex.Message;
+                ViewBag.Categories = await _context.Categories.ToListAsync();
+                return View(course);
+            }
         }
 
         [HttpPost]
@@ -138,16 +203,42 @@ namespace DersSunumSistemi.Controllers
             var instructor = await GetCurrentInstructor();
             if (instructor == null) return NotFound();
 
-            var course = await _context.Courses
-                .Include(c => c.Presentations)
-                .FirstOrDefaultAsync(c => c.Id == id && c.InstructorId == instructor.Id);
+            try
+            {
+                var course = await _context.Courses
+                    .Include(c => c.Presentations)
+                    .FirstOrDefaultAsync(c => c.Id == id && c.InstructorId == instructor.Id);
 
-            if (course == null) return NotFound();
+                if (course == null)
+                {
+                    TempData["Error"] = "Ders bulunamadı.";
+                    return RedirectToAction(nameof(MyCourses));
+                }
 
-            _context.Courses.Remove(course);
-            await _context.SaveChangesAsync();
+                // Delete presentation files
+                foreach (var presentation in course.Presentations)
+                {
+                    if (!string.IsNullOrEmpty(presentation.FilePath))
+                    {
+                        var filePath = Path.Combine(_environment.WebRootPath, presentation.FilePath.TrimStart('/'));
+                        if (System.IO.File.Exists(filePath))
+                        {
+                            System.IO.File.Delete(filePath);
+                        }
+                    }
+                }
 
-            return RedirectToAction(nameof(MyCourses));
+                _context.Courses.Remove(course);
+                await _context.SaveChangesAsync();
+
+                TempData["Success"] = "Ders başarıyla silindi.";
+                return RedirectToAction(nameof(MyCourses));
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Ders silinirken bir hata oluştu: " + ex.Message;
+                return RedirectToAction(nameof(MyCourses));
+            }
         }
 
         // PRESENTATIONS
@@ -193,12 +284,36 @@ namespace DersSunumSistemi.Controllers
 
             if (course == null) return NotFound();
 
-            if (file != null && file.Length > 0)
+            try
             {
+                // Validation
+                if (string.IsNullOrWhiteSpace(model.Title))
+                {
+                    TempData["Error"] = "Materyal başlığı zorunludur.";
+                    ViewBag.Course = course;
+                    return View(model);
+                }
+
+                if (file == null || file.Length == 0)
+                {
+                    TempData["Error"] = "Dosya seçimi zorunludur.";
+                    ViewBag.Course = course;
+                    return View(model);
+                }
+
+                // Check file size (100MB limit)
+                if (file.Length > 100 * 1024 * 1024)
+                {
+                    TempData["Error"] = "Dosya boyutu 100MB'dan büyük olamaz.";
+                    ViewBag.Course = course;
+                    return View(model);
+                }
+
+                // Upload file
                 var uploadsFolder = Path.Combine(_environment.WebRootPath, "uploads", "presentations");
                 Directory.CreateDirectory(uploadsFolder);
 
-                var uniqueFileName = $"{Guid.NewGuid()}_{file.FileName}";
+                var uniqueFileName = $"{Guid.NewGuid()}_{Path.GetFileName(file.FileName)}";
                 var filePath = Path.Combine(uploadsFolder, uniqueFileName);
 
                 using (var stream = new FileStream(filePath, FileMode.Create))
@@ -210,17 +325,23 @@ namespace DersSunumSistemi.Controllers
                 model.FilePath = $"/uploads/presentations/{uniqueFileName}";
                 model.FileSize = file.Length;
                 model.FileType = Path.GetExtension(file.FileName).TrimStart('.');
+                model.CourseId = courseId;
+                model.UploadDate = DateTime.Now;
+                model.ViewCount = 0;
+                model.DownloadCount = 0;
+
+                _context.Presentations.Add(model);
+                await _context.SaveChangesAsync();
+
+                TempData["Success"] = "Materyal başarıyla yüklendi.";
+                return RedirectToAction(nameof(CourseDetails), new { id = courseId });
             }
-
-            model.CourseId = courseId;
-            model.UploadDate = DateTime.Now;
-            model.ViewCount = 0;
-            model.DownloadCount = 0;
-
-            _context.Presentations.Add(model);
-            await _context.SaveChangesAsync();
-
-            return RedirectToAction(nameof(CourseDetails), new { id = courseId });
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Materyal yüklenirken bir hata oluştu: " + ex.Message;
+                ViewBag.Course = course;
+                return View(model);
+            }
         }
 
         [HttpPost]
@@ -229,27 +350,41 @@ namespace DersSunumSistemi.Controllers
             var instructor = await GetCurrentInstructor();
             if (instructor == null) return NotFound();
 
-            var presentation = await _context.Presentations
-                .Include(p => p.Course)
-                .FirstOrDefaultAsync(p => p.Id == id && p.Course!.InstructorId == instructor.Id);
-
-            if (presentation == null) return NotFound();
-
-            // Dosyayı sil
-            if (!string.IsNullOrEmpty(presentation.FilePath))
+            try
             {
-                var filePath = Path.Combine(_environment.WebRootPath, presentation.FilePath.TrimStart('/'));
-                if (System.IO.File.Exists(filePath))
+                var presentation = await _context.Presentations
+                    .Include(p => p.Course)
+                    .FirstOrDefaultAsync(p => p.Id == id && p.Course!.InstructorId == instructor.Id);
+
+                if (presentation == null)
                 {
-                    System.IO.File.Delete(filePath);
+                    TempData["Error"] = "Materyal bulunamadı.";
+                    return RedirectToAction(nameof(Dashboard));
                 }
+
+                var courseId = presentation.CourseId;
+
+                // Dosyayı sil
+                if (!string.IsNullOrEmpty(presentation.FilePath))
+                {
+                    var filePath = Path.Combine(_environment.WebRootPath, presentation.FilePath.TrimStart('/'));
+                    if (System.IO.File.Exists(filePath))
+                    {
+                        System.IO.File.Delete(filePath);
+                    }
+                }
+
+                _context.Presentations.Remove(presentation);
+                await _context.SaveChangesAsync();
+
+                TempData["Success"] = "Materyal başarıyla silindi.";
+                return RedirectToAction(nameof(CourseDetails), new { id = courseId });
             }
-
-            var courseId = presentation.CourseId;
-            _context.Presentations.Remove(presentation);
-            await _context.SaveChangesAsync();
-
-            return RedirectToAction(nameof(CourseDetails), new { id = courseId });
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Materyal silinirken bir hata oluştu: " + ex.Message;
+                return RedirectToAction(nameof(Dashboard));
+            }
         }
 
         [HttpGet]
