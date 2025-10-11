@@ -131,7 +131,28 @@
         </div>
     </nav>
 
-    <main class="py-4">
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+        <!-- Sidebar Toggle Button -->
+        <button class="sidebar-toggle-btn active" id="sidebarToggle">
+            <i class="bi bi-chevron-left"></i>
+        </button>
+
+        <!-- Sidebar Menu -->
+        <div class="sidebar-wrapper" id="sidebar">
+            <ul class="sidebar-menu" id="sidebarMenuList">
+                <!-- Menü dinamik olarak yüklenecek -->
+                <li class="text-center p-3">
+                    <div class="spinner-border spinner-border-sm text-light" role="status">
+                        <span class="visually-hidden">Yükleniyor...</span>
+                    </div>
+                    <span class="ms-2 text-light">Menü yükleniyor...</span>
+                </li>
+            </ul>
+        </div>
+    }
+
+    <main class="@(User.Identity?.IsAuthenticated == true ? "main-content-wrapper" : "py-4")">
         @if (TempData["Success"] != null)
         {
             <div class="container">
@@ -352,6 +373,126 @@
         $('#institutionsToggle').on('click', function(e) {
             e.preventDefault();
         });
+
+        // Sidebar Collapsible Menu
+        $('.sidebar-menu-link').on('click', function(e) {
+            e.preventDefault();
+
+            var $button = $(this);
+            var targetId = $button.data('target');
+            var $submenu = $('#' + targetId);
+
+            // Toggle the submenu
+            $submenu.toggleClass('show');
+
+            // Toggle the icon rotation
+            $button.toggleClass('expanded');
+
+            // Close other submenus (optional - for accordion style)
+            $('.sidebar-submenu').not($submenu).removeClass('show');
+            $('.sidebar-menu-link').not($button).removeClass('expanded');
+        });
+
+        // Sidebar Toggle Functionality
+        $('#sidebarToggle').on('click', function() {
+            var $sidebar = $('#sidebar');
+            var $mainContent = $('main.main-content-wrapper');
+            var $toggleBtn = $(this);
+
+            // Toggle sidebar
+            $sidebar.toggleClass('collapsed');
+            $mainContent.toggleClass('sidebar-collapsed');
+            $toggleBtn.toggleClass('active');
+
+            // Store state in localStorage
+            var isCollapsed = $sidebar.hasClass('collapsed');
+            localStorage.setItem('sidebarCollapsed', isCollapsed);
+        });
+
+        // Restore sidebar state from localStorage
+        $(document).ready(function() {
+            var isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+            if (isCollapsed) {
+                $('#sidebar').addClass('collapsed');
+                $('main.main-content-wrapper').addClass('sidebar-collapsed');
+                $('#sidebarToggle').removeClass('active');
+            }
+
+            // Load sidebar menu dynamically
+            loadSidebarMenu();
+        });
+
+        // Load Sidebar Menu from API
+        function loadSidebarMenu() {
+            $.ajax({
+                url: '@Url.Action("GetSidebarMenu", "Home")',
+                method: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    console.log('Sidebar menu loaded:', data);
+                    renderSidebarMenu(data);
+                },
+                error: function(xhr, status, error) {
+                    console.error('ERROR loading sidebar menu:', error);
+                    $('#sidebarMenuList').html('<li class="text-center p-3 text-danger"><i class="bi bi-exclamation-triangle"></i> Menü yüklenemedi</li>');
+                }
+            });
+        }
+
+        // Render Sidebar Menu
+        function renderSidebarMenu(institutions) {
+            var html = '';
+
+            institutions.forEach(function(institution) {
+                // Kurum için ID oluştur (boşlukları ve Türkçe karakterleri temizle)
+                var institutionId = institution.name.toLowerCase()
+                    .replace(/ü/g, 'u').replace(/ğ/g, 'g').replace(/ş/g, 's')
+                    .replace(/ı/g, 'i').replace(/ö/g, 'o').replace(/ç/g, 'c')
+                    .replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+
+                html += '<li class="sidebar-menu-item">';
+                html += '<button class="sidebar-menu-link" data-toggle="collapse" data-target="' + institutionId + '">';
+                html += '<span>' + institution.name.toUpperCase() + '</span>';
+                html += '<i class="bi bi-chevron-right sidebar-menu-icon"></i>';
+                html += '</button>';
+                html += '<ul class="sidebar-submenu" id="' + institutionId + '">';
+
+                // Fakülteleri ve bölümleri listele
+                institution.faculties.forEach(function(faculty) {
+                    faculty.departments.forEach(function(department) {
+                        html += '<li class="sidebar-submenu-item">';
+                        html += '<a href="@Url.Action("DepartmentInstructors", "Home")?id=' + department.id + '" class="sidebar-submenu-link">';
+                        html += department.name;
+                        html += '</a>';
+                        html += '</li>';
+                    });
+                });
+
+                html += '</ul>';
+                html += '</li>';
+            });
+
+            $('#sidebarMenuList').html(html);
+
+            // Re-attach event handlers after dynamic content load
+            $('.sidebar-menu-link').on('click', function(e) {
+                e.preventDefault();
+
+                var $button = $(this);
+                var targetId = $button.data('target');
+                var $submenu = $('#' + targetId);
+
+                // Toggle the submenu
+                $submenu.toggleClass('show');
+
+                // Toggle the icon rotation
+                $button.toggleClass('expanded');
+
+                // Close other submenus (optional - for accordion style)
+                $('.sidebar-submenu').not($submenu).removeClass('show');
+                $('.sidebar-menu-link').not($button).removeClass('expanded');
+            });
+        }
     </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

@@ -337,4 +337,35 @@ public class HomeController : Controller
 
         return Json(faculty);
     }
+
+    // API Endpoint for Sidebar Menu
+    [Authorize]
+    [HttpGet]
+    public async Task<IActionResult> GetSidebarMenu()
+    {
+        var institutions = await _context.Institutions
+            .Include(i => i.Faculties)
+            .ThenInclude(f => f.Departments)
+            .OrderBy(i => i.Type)
+            .ThenBy(i => i.Name)
+            .Select(i => new
+            {
+                i.Id,
+                i.Name,
+                i.Type,
+                Faculties = i.Faculties.Select(f => new
+                {
+                    f.Id,
+                    f.Name,
+                    Departments = f.Departments.Select(d => new
+                    {
+                        d.Id,
+                        d.Name
+                    }).ToList()
+                }).ToList()
+            })
+            .ToListAsync();
+
+        return Json(institutions);
+    }
 }

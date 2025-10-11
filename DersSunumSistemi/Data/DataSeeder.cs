@@ -11,211 +11,164 @@ namespace DersSunumSistemi.Data
             if (await context.Institutions.AnyAsync())
                 return;
 
-            // 1. Kurumlar (Institutions)
-            var muhendislikFakultesi = new Institution
-            {
-                Name = "Mühendislik Fakültesi",
-                Code = "MF",
-                Description = "Mühendislik alanında eğitim veren fakülte",
-                Type = InstitutionType.Faculty
-            };
+            // 1. Kurumlar (Institutions) - Fakülteler
+            var fenFakultesi = new Institution { Name = "Fen Fakültesi", Code = "FF", Description = "Fen bilimleri alanında eğitim veren fakülte", Type = InstitutionType.Faculty };
+            var iibfFakultesi = new Institution { Name = "İktisadi ve İdari Bilimler Fakültesi", Code = "İİBF", Description = "İktisadi ve idari bilimler alanında eğitim", Type = InstitutionType.Faculty };
+            var iletisimFakultesi = new Institution { Name = "İletişim Fakültesi", Code = "İLTF", Description = "İletişim bilimleri alanında eğitim", Type = InstitutionType.Faculty };
+            var muhendislikFakultesi = new Institution { Name = "Mühendislik Fakültesi", Code = "MF", Description = "Mühendislik alanında eğitim veren fakülte", Type = InstitutionType.Faculty };
+            var saglikFakultesi = new Institution { Name = "Sağlık Bilimleri Fakültesi", Code = "SBF", Description = "Sağlık bilimleri alanında eğitim", Type = InstitutionType.Faculty };
+            var turizmFakultesi = new Institution { Name = "Turizm Fakültesi", Code = "TF", Description = "Turizm ve otelcilik alanında eğitim", Type = InstitutionType.Faculty };
 
-            var tipFakultesi = new Institution
-            {
-                Name = "Tıp Fakültesi",
-                Code = "TF",
-                Description = "Sağlık bilimleri alanında eğitim veren fakülte",
-                Type = InstitutionType.Faculty
-            };
+            // Meslek Yüksekokulları
+            var adaletMYO = new Institution { Name = "Adalet Meslek Yüksekokulu", Code = "AMYO", Description = "Adalet alanında 2 yıllık eğitim", Type = InstitutionType.VocationalSchool };
+            var saglikMYO = new Institution { Name = "Sağlık Hizmetleri Meslek Yüksekokulu", Code = "SHMYO", Description = "Sağlık hizmetleri alanında 2 yıllık eğitim", Type = InstitutionType.VocationalSchool };
+            var sosyalMYO = new Institution { Name = "Sosyal Bilimler Meslek Yüksekokulu", Code = "SBMYO", Description = "Sosyal bilimler alanında 2 yıllık eğitim", Type = InstitutionType.VocationalSchool };
+            var teknikMYO = new Institution { Name = "Teknik Bilimler Meslek Yüksekokulu", Code = "TBMYO", Description = "Teknik bilimler alanında 2 yıllık eğitim", Type = InstitutionType.VocationalSchool };
 
-            var ziraatFakultesi = new Institution
-            {
-                Name = "Ziraat Fakültesi",
-                Code = "ZF",
-                Description = "Tarım ve hayvancılık alanında eğitim veren fakülte",
-                Type = InstitutionType.Faculty
-            };
+            // Diğer
+            var lisansTamamlama = new Institution { Name = "Lisans Tamamlama", Code = "LT", Description = "Ön lisans mezunları için lisans tamamlama programları", Type = InstitutionType.Faculty };
+            var ortakDersler = new Institution { Name = "Ortak Dersler Bölümü", Code = "ODB", Description = "Tüm bölümler için ortak dersler", Type = InstitutionType.Faculty };
+            var dijitalEgitim = new Institution { Name = "Dijital Eğitim", Code = "DE", Description = "Dijital eğitim ve uzaktan eğitim dersleri", Type = InstitutionType.Faculty };
 
-            var meslekYuksekokulu = new Institution
-            {
-                Name = "Teknik Bilimler Meslek Yüksekokulu",
-                Code = "TBMYO",
-                Description = "Teknik alanlarda 2 yıllık önlisans eğitimi veren meslek yüksekokulu",
-                Type = InstitutionType.VocationalSchool
-            };
-
-            context.Institutions.AddRange(muhendislikFakultesi, tipFakultesi, ziraatFakultesi, meslekYuksekokulu);
+            context.Institutions.AddRange(fenFakultesi, iibfFakultesi, iletisimFakultesi, muhendislikFakultesi, saglikFakultesi, turizmFakultesi,
+                                         adaletMYO, saglikMYO, sosyalMYO, teknikMYO, lisansTamamlama, ortakDersler, dijitalEgitim);
             await context.SaveChangesAsync();
 
-            // 2. Fakülteler (Faculties)
+            // 2. Fakülteler (Faculties) - Her kurum altında
+
+            // Fen Fakültesi altında
+            var matematik = new Faculty { Name = "Matematik", Code = "MAT", Description = "Matematik bölümü", InstitutionId = fenFakultesi.Id };
+            var fizik = new Faculty { Name = "Fizik", Code = "FIZ", Description = "Fizik bölümü", InstitutionId = fenFakultesi.Id };
+            var kimya = new Faculty { Name = "Kimya", Code = "KIM", Description = "Kimya bölümü", InstitutionId = fenFakultesi.Id };
+
+            // İİBF altında
+            var isletme = new Faculty { Name = "İşletme", Code = "ISL", Description = "İşletme bölümü", InstitutionId = iibfFakultesi.Id };
+            var iktisat = new Faculty { Name = "İktisat", Code = "IKT", Description = "İktisat bölümü", InstitutionId = iibfFakultesi.Id };
+            var kamuYonetimi = new Faculty { Name = "Kamu Yönetimi", Code = "KY", Description = "Kamu yönetimi bölümü", InstitutionId = iibfFakultesi.Id };
+
+            // İletişim Fakültesi altında
+            var gazetecilik = new Faculty { Name = "Gazetecilik", Code = "GAZ", Description = "Gazetecilik bölümü", InstitutionId = iletisimFakultesi.Id };
+            var halklaIliskiler = new Faculty { Name = "Halkla İlişkiler", Code = "HIL", Description = "Halkla ilişkiler bölümü", InstitutionId = iletisimFakultesi.Id };
+
             // Mühendislik Fakültesi altında
-            var bilgisayarFakultesi = new Faculty
-            {
-                Name = "Bilgisayar Mühendisliği",
-                Code = "BM",
-                Description = "Bilgisayar ve yazılım mühendisliği eğitimi",
-                InstitutionId = muhendislikFakultesi.Id
-            };
+            var bilgisayarMuh = new Faculty { Name = "Bilgisayar Mühendisliği", Code = "BM", Description = "Bilgisayar mühendisliği bölümü", InstitutionId = muhendislikFakultesi.Id };
+            var elektrikMuh = new Faculty { Name = "Elektrik-Elektronik Mühendisliği", Code = "EEM", Description = "Elektrik-elektronik mühendisliği", InstitutionId = muhendislikFakultesi.Id };
+            var insaatMuh = new Faculty { Name = "İnşaat Mühendisliği", Code = "INS", Description = "İnşaat mühendisliği bölümü", InstitutionId = muhendislikFakultesi.Id };
+            var makineMuh = new Faculty { Name = "Makine Mühendisliği", Code = "MAK", Description = "Makine mühendisliği bölümü", InstitutionId = muhendislikFakultesi.Id };
 
-            var insaatFakultesi = new Faculty
-            {
-                Name = "İnşaat Mühendisliği",
-                Code = "IM",
-                Description = "İnşaat ve yapı mühendisliği eğitimi",
-                InstitutionId = muhendislikFakultesi.Id
-            };
+            // Sağlık Bilimleri Fakültesi altında
+            var hemsirelik = new Faculty { Name = "Hemşirelik", Code = "HEM", Description = "Hemşirelik bölümü", InstitutionId = saglikFakultesi.Id };
+            var fizyoterapi = new Faculty { Name = "Fizyoterapi ve Rehabilitasyon", Code = "FTR", Description = "Fizyoterapi bölümü", InstitutionId = saglikFakultesi.Id };
 
-            var elektrikFakultesi = new Faculty
-            {
-                Name = "Elektrik-Elektronik Mühendisliği",
-                Code = "EEM",
-                Description = "Elektrik ve elektronik mühendisliği eğitimi",
-                InstitutionId = muhendislikFakultesi.Id
-            };
+            // Turizm Fakültesi altında
+            var turizmIsletme = new Faculty { Name = "Turizm İşletmeciliği", Code = "TUR", Description = "Turizm işletmeciliği bölümü", InstitutionId = turizmFakultesi.Id };
+            var gastronomi = new Faculty { Name = "Gastronomi ve Mutfak Sanatları", Code = "GAS", Description = "Gastronomi bölümü", InstitutionId = turizmFakultesi.Id };
 
-            // Tıp Fakültesi altında
-            var dahiliyeFakultesi = new Faculty
-            {
-                Name = "Dahiliye",
-                Code = "DAH",
-                Description = "İç hastalıkları uzmanlık eğitimi",
-                InstitutionId = tipFakultesi.Id
-            };
+            // MYO'lar altında
+            var adaletProgrami = new Faculty { Name = "Adalet Programı", Code = "AD", Description = "Adalet programı", InstitutionId = adaletMYO.Id };
+            var tibbiDokuman = new Faculty { Name = "Tıbbi Dokümantasyon ve Sekreterlik", Code = "TDS", Description = "Tıbbi dokümantasyon programı", InstitutionId = saglikMYO.Id };
+            var ilkAcil = new Faculty { Name = "İlk ve Acil Yardım", Code = "IAY", Description = "İlk ve acil yardım programı", InstitutionId = saglikMYO.Id };
+            var muhasebe = new Faculty { Name = "Muhasebe ve Vergi Uygulamaları", Code = "MVU", Description = "Muhasebe programı", InstitutionId = sosyalMYO.Id };
+            var bankacilik = new Faculty { Name = "Bankacılık ve Sigortacılık", Code = "BS", Description = "Bankacılık programı", InstitutionId = sosyalMYO.Id };
+            var bilgProg = new Faculty { Name = "Bilgisayar Programlama", Code = "BP", Description = "Bilgisayar programlama", InstitutionId = teknikMYO.Id };
+            var elektrikProg = new Faculty { Name = "Elektrik Programı", Code = "EP", Description = "Elektrik programı", InstitutionId = teknikMYO.Id };
 
-            var cerrahiFakultesi = new Faculty
-            {
-                Name = "Cerrahi",
-                Code = "CER",
-                Description = "Genel cerrahi uzmanlık eğitimi",
-                InstitutionId = tipFakultesi.Id
-            };
+            // Diğerleri
+            var lisansTamamlamaIsletme = new Faculty { Name = "İşletme (Lisans Tamamlama)", Code = "ISLT", Description = "Lisans tamamlama programı", InstitutionId = lisansTamamlama.Id };
+            var turkDili = new Faculty { Name = "Türk Dili", Code = "TD", Description = "Türk dili dersleri", InstitutionId = ortakDersler.Id };
+            var yabanciDil = new Faculty { Name = "Yabancı Dil", Code = "YD", Description = "Yabancı dil dersleri", InstitutionId = ortakDersler.Id };
+            var dijitalOkuryazar = new Faculty { Name = "Dijital Okuryazarlık", Code = "DO", Description = "Dijital okuryazarlık dersleri", InstitutionId = dijitalEgitim.Id };
+            var uzaktanEgitim = new Faculty { Name = "Uzaktan Eğitim Sistemleri", Code = "UES", Description = "Uzaktan eğitim dersleri", InstitutionId = dijitalEgitim.Id };
 
-            // Ziraat Fakültesi altında
-            var ziraatMuhFakultesi = new Faculty
-            {
-                Name = "Ziraat Mühendisliği",
-                Code = "ZM",
-                Description = "Tarımsal üretim ve yönetim eğitimi",
-                InstitutionId = ziraatFakultesi.Id
-            };
-
-            var veterinerFakultesi = new Faculty
-            {
-                Name = "Veterinerlik",
-                Code = "VET",
-                Description = "Hayvan sağlığı ve hastalıkları eğitimi",
-                InstitutionId = ziraatFakultesi.Id
-            };
-
-            // MYO altında
-            var bilgisayarProgramlamaMYO = new Faculty
-            {
-                Name = "Bilgisayar Programlama",
-                Code = "BP",
-                Description = "2 yıllık bilgisayar programlama eğitimi",
-                InstitutionId = meslekYuksekokulu.Id
-            };
-
-            context.Faculties.AddRange(bilgisayarFakultesi, insaatFakultesi, elektrikFakultesi,
-                dahiliyeFakultesi, cerrahiFakultesi, ziraatMuhFakultesi, veterinerFakultesi, bilgisayarProgramlamaMYO);
+            context.Faculties.AddRange(matematik, fizik, kimya, isletme, iktisat, kamuYonetimi, gazetecilik, halklaIliskiler,
+                                      bilgisayarMuh, elektrikMuh, insaatMuh, makineMuh, hemsirelik, fizyoterapi,
+                                      turizmIsletme, gastronomi, adaletProgrami, tibbiDokuman, ilkAcil, muhasebe,
+                                      bankacilik, bilgProg, elektrikProg, lisansTamamlamaIsletme, turkDili, yabanciDil,
+                                      dijitalOkuryazar, uzaktanEgitim);
             await context.SaveChangesAsync();
 
-            // 3. Bölümler (Departments)
+            // 3. Bölümler (Departments) - Her fakülte altında alt bölümler
+
+            // Matematik altında
+            var matematikBolumu = new Department { Name = "Matematik Bölümü", Code = "MAT-001", Description = "Matematik", FacultyId = matematik.Id };
+
+            // Fizik altında
+            var fizikBolumu = new Department { Name = "Fizik Bölümü", Code = "FIZ-001", Description = "Fizik", FacultyId = fizik.Id };
+
+            // Kimya altında
+            var kimyaBolumu = new Department { Name = "Kimya Bölümü", Code = "KIM-001", Description = "Kimya", FacultyId = kimya.Id };
+
+            // İşletme altında
+            var isletmeBolumu = new Department { Name = "İşletme Bölümü", Code = "ISL-001", Description = "İşletme", FacultyId = isletme.Id };
+
+            // İktisat altında
+            var iktisatBolumu = new Department { Name = "İktisat Bölümü", Code = "IKT-001", Description = "İktisat", FacultyId = iktisat.Id };
+
+            // Kamu Yönetimi altında
+            var kamuYonetimiBolumu = new Department { Name = "Kamu Yönetimi Bölümü", Code = "KY-001", Description = "Kamu yönetimi", FacultyId = kamuYonetimi.Id };
+
+            // Gazetecilik altında
+            var gazetecilikBolumu = new Department { Name = "Gazetecilik Bölümü", Code = "GAZ-001", Description = "Gazetecilik", FacultyId = gazetecilik.Id };
+
+            // Halkla İlişkiler altında
+            var halklaIliskilerBolumu = new Department { Name = "Halkla İlişkiler Bölümü", Code = "HIL-001", Description = "Halkla ilişkiler", FacultyId = halklaIliskiler.Id };
+
             // Bilgisayar Mühendisliği altında
-            var yazilimBolumu = new Department
-            {
-                Name = "Yazılım Mühendisliği Bölümü",
-                Code = "YM",
-                Description = "Yazılım geliştirme ve mühendisliği",
-                FacultyId = bilgisayarFakultesi.Id
-            };
-
-            var ybs = new Department
-            {
-                Name = "Yönetim Bilişim Sistemleri",
-                Code = "YBS",
-                Description = "İşletme ve bilişim sistemleri",
-                FacultyId = bilgisayarFakultesi.Id
-            };
-
-            // İnşaat Mühendisliği altında
-            var yapiMuh = new Department
-            {
-                Name = "Yapı Mühendisliği",
-                Code = "YM-INS",
-                Description = "Bina ve yapı tasarımı",
-                FacultyId = insaatFakultesi.Id
-            };
+            var yazilimMuh = new Department { Name = "Yazılım Mühendisliği", Code = "YM-001", Description = "Yazılım mühendisliği", FacultyId = bilgisayarMuh.Id };
+            var ybs = new Department { Name = "Yönetim Bilişim Sistemleri", Code = "YBS-001", Description = "Yönetim bilişim sistemleri", FacultyId = bilgisayarMuh.Id };
 
             // Elektrik-Elektronik altında
-            var elektronikBolumu = new Department
-            {
-                Name = "Elektronik Mühendisliği",
-                Code = "EM",
-                Description = "Elektronik sistemler ve devreler",
-                FacultyId = elektrikFakultesi.Id
-            };
+            var elektronikBolumu = new Department { Name = "Elektronik Mühendisliği", Code = "EM-001", Description = "Elektronik mühendisliği", FacultyId = elektrikMuh.Id };
 
-            // Dahiliye altında
-            var icHastaliklari = new Department
-            {
-                Name = "İç Hastalıkları",
-                Code = "ICH",
-                Description = "İç hastalıkları teşhis ve tedavi",
-                FacultyId = dahiliyeFakultesi.Id
-            };
+            // İnşaat Mühendisliği altında
+            var yapiMuh = new Department { Name = "Yapı Mühendisliği", Code = "YM-INS", Description = "Yapı mühendisliği", FacultyId = insaatMuh.Id };
 
-            // Cerrahi altında
-            var genelCerrahi = new Department
-            {
-                Name = "Genel Cerrahi",
-                Code = "GC",
-                Description = "Cerrahi müdahaleler ve operasyonlar",
-                FacultyId = cerrahiFakultesi.Id
-            };
+            // Makine Mühendisliği altında
+            var makineBolumu = new Department { Name = "Makine Mühendisliği Bölümü", Code = "MAK-001", Description = "Makine mühendisliği", FacultyId = makineMuh.Id };
 
-            // Ziraat altında
-            var tarimsal = new Department
-            {
-                Name = "Tarımsal Yapılar ve Sulama",
-                Code = "TYS",
-                Description = "Tarımsal altyapı ve sulama sistemleri",
-                FacultyId = ziraatMuhFakultesi.Id
-            };
+            // Hemşirelik altında
+            var hemsirelikBolumu = new Department { Name = "Hemşirelik Bölümü", Code = "HEM-001", Description = "Hemşirelik", FacultyId = hemsirelik.Id };
 
-            // Veteriner altında
-            var hayvanSagligi = new Department
-            {
-                Name = "Hayvan Sağlığı ve Hastalıkları",
-                Code = "HSH",
-                Description = "Veteriner klinik ve tedavi",
-                FacultyId = veterinerFakultesi.Id
-            };
+            // Fizyoterapi altında
+            var fizyoterapiBolumu = new Department { Name = "Fizyoterapi Bölümü", Code = "FTR-001", Description = "Fizyoterapi", FacultyId = fizyoterapi.Id };
 
-            // MYO altında
-            var webProgramlama = new Department
-            {
-                Name = "Web Programlama",
-                Code = "WP",
-                Description = "Web teknolojileri ve programlama",
-                FacultyId = bilgisayarProgramlamaMYO.Id
-            };
+            // Turizm altında
+            var turizmBolumu = new Department { Name = "Turizm İşletmeciliği Bölümü", Code = "TUR-001", Description = "Turizm işletmeciliği", FacultyId = turizmIsletme.Id };
 
-            context.Departments.AddRange(yazilimBolumu, ybs, yapiMuh, elektronikBolumu,
-                icHastaliklari, genelCerrahi, tarimsal, hayvanSagligi, webProgramlama);
+            // Gastronomi altında
+            var gastronomiBolumu = new Department { Name = "Gastronomi Bölümü", Code = "GAS-001", Description = "Gastronomi", FacultyId = gastronomi.Id };
+
+            // MYO bölümleri
+            var adaletBolumu = new Department { Name = "Adalet", Code = "AD-001", Description = "Adalet", FacultyId = adaletProgrami.Id };
+            var tibbiDokumanBolumu = new Department { Name = "Tıbbi Dokümantasyon", Code = "TDS-001", Description = "Tıbbi dokümantasyon", FacultyId = tibbiDokuman.Id };
+            var ilkAcilBolumu = new Department { Name = "İlk ve Acil Yardım", Code = "IAY-001", Description = "İlk ve acil yardım", FacultyId = ilkAcil.Id };
+            var muhasebeBolumu = new Department { Name = "Muhasebe", Code = "MVU-001", Description = "Muhasebe", FacultyId = muhasebe.Id };
+            var bankacilikBolumu = new Department { Name = "Bankacılık", Code = "BS-001", Description = "Bankacılık", FacultyId = bankacilik.Id };
+            var bilgProgBolumu = new Department { Name = "Bilgisayar Programlama", Code = "BP-001", Description = "Bilgisayar programlama", FacultyId = bilgProg.Id };
+            var elektrikProgBolumu = new Department { Name = "Elektrik", Code = "EP-001", Description = "Elektrik", FacultyId = elektrikProg.Id };
+            var lisansTamBolumu = new Department { Name = "İşletme", Code = "ISLT-001", Description = "İşletme lisans tamamlama", FacultyId = lisansTamamlamaIsletme.Id };
+            var turkDiliBolumu = new Department { Name = "Türk Dili", Code = "TD-001", Description = "Türk dili", FacultyId = turkDili.Id };
+            var yabanciDilBolumu = new Department { Name = "Yabancı Dil", Code = "YD-001", Description = "Yabancı dil", FacultyId = yabanciDil.Id };
+            var dijitalOkuryazarBolumu = new Department { Name = "Dijital Okuryazarlık", Code = "DO-001", Description = "Dijital okuryazarlık", FacultyId = dijitalOkuryazar.Id };
+            var uzaktanEgitimBolumu = new Department { Name = "Uzaktan Eğitim", Code = "UES-001", Description = "Uzaktan eğitim", FacultyId = uzaktanEgitim.Id };
+
+            context.Departments.AddRange(matematikBolumu, fizikBolumu, kimyaBolumu, isletmeBolumu, iktisatBolumu, kamuYonetimiBolumu,
+                                        gazetecilikBolumu, halklaIliskilerBolumu, yazilimMuh, ybs, elektronikBolumu, yapiMuh, makineBolumu,
+                                        hemsirelikBolumu, fizyoterapiBolumu, turizmBolumu, gastronomiBolumu, adaletBolumu, tibbiDokumanBolumu,
+                                        ilkAcilBolumu, muhasebeBolumu, bankacilikBolumu, bilgProgBolumu, elektrikProgBolumu, lisansTamBolumu,
+                                        turkDiliBolumu, yabanciDilBolumu, dijitalOkuryazarBolumu, uzaktanEgitimBolumu);
             await context.SaveChangesAsync();
 
             // 4. Kategoriler
             var kategori1 = new Category { Name = "Temel Bilimler", Description = "Temel bilim dersleri" };
             var kategori2 = new Category { Name = "Mühendislik", Description = "Mühendislik dersleri" };
-            var kategori3 = new Category { Name = "Tıp Bilimleri", Description = "Tıbbi dersler" };
-            var kategori4 = new Category { Name = "Tarım", Description = "Tarım ve hayvancılık dersleri" };
+            var kategori3 = new Category { Name = "Sosyal Bilimler", Description = "Sosyal bilimler dersleri" };
+            var kategori4 = new Category { Name = "Sağlık Bilimleri", Description = "Sağlık bilimleri dersleri" };
 
             context.Categories.AddRange(kategori1, kategori2, kategori3, kategori4);
             await context.SaveChangesAsync();
 
-            // 5. Kullanıcılar ve Akademisyenler
-            // Admin kullanıcı
+            // 5. Admin kullanıcı
             var adminUser = new User
             {
                 UserName = "admin",
@@ -230,92 +183,7 @@ namespace DersSunumSistemi.Data
             context.Users.Add(adminUser);
             await context.SaveChangesAsync();
 
-            // Öğrenci kullanıcı
-            var studentUser = new User
-            {
-                UserName = "mehmet.kaya",
-                Email = "mehmet.kaya@student.edu.tr",
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword("student123"),
-                FullName = "Mehmet Kaya",
-                Role = UserRole.Student,
-                IsActive = true,
-                CreatedDate = DateTime.Now
-            };
-
-            context.Users.Add(studentUser);
-            await context.SaveChangesAsync();
-
-            // Örnek Öğrenciler (Farklı Bölümlerden)
-
-            // 1. Yazılım Mühendisliği Öğrencisi
-            var student1 = new User
-            {
-                UserName = "ali.yilmaz",
-                Email = "ali.yilmaz@student.edu.tr",
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword("student123"),
-                FullName = "Ali Yılmaz",
-                Role = UserRole.Student,
-                DepartmentId = yazilimBolumu.Id,
-                IsActive = true,
-                CreatedDate = DateTime.Now
-            };
-
-            // 2. Tıp Öğrencisi (İç Hastalıkları)
-            var student2 = new User
-            {
-                UserName = "ayse.demir",
-                Email = "ayse.demir@student.edu.tr",
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword("student123"),
-                FullName = "Ayşe Demir",
-                Role = UserRole.Student,
-                DepartmentId = icHastaliklari.Id,
-                IsActive = true,
-                CreatedDate = DateTime.Now
-            };
-
-            // 3. Genel Cerrahi Öğrencisi
-            var student3 = new User
-            {
-                UserName = "mehmet.kara",
-                Email = "mehmet.kara@student.edu.tr",
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword("student123"),
-                FullName = "Mehmet Kara",
-                Role = UserRole.Student,
-                DepartmentId = genelCerrahi.Id,
-                IsActive = true,
-                CreatedDate = DateTime.Now
-            };
-
-            // 4. YBS Öğrencisi
-            var student4 = new User
-            {
-                UserName = "zeynep.sahin",
-                Email = "zeynep.sahin@student.edu.tr",
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword("student123"),
-                FullName = "Zeynep Şahin",
-                Role = UserRole.Student,
-                DepartmentId = ybs.Id,
-                IsActive = true,
-                CreatedDate = DateTime.Now
-            };
-
-            // 5. İnşaat Mühendisliği Öğrencisi
-            var student5 = new User
-            {
-                UserName = "can.ozturk",
-                Email = "can.ozturk@student.edu.tr",
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword("student123"),
-                FullName = "Can Öztürk",
-                Role = UserRole.Student,
-                DepartmentId = yapiMuh.Id,
-                IsActive = true,
-                CreatedDate = DateTime.Now
-            };
-
-            context.Users.AddRange(student1, student2, student3, student4, student5);
-            await context.SaveChangesAsync();
-
-            // Yazılım Mühendisliği Hocaları
+            // 6. Örnek öğretim görevlileri
             var user1 = new User
             {
                 UserName = "ahmet.yilmaz",
@@ -337,7 +205,7 @@ namespace DersSunumSistemi.Data
                 Phone = "+90 555 111 1111",
                 Title = "Prof. Dr.",
                 Bio = "Yazılım mühendisliği alanında 20 yıllık deneyim",
-                DepartmentId = yazilimBolumu.Id,
+                DepartmentId = yazilimMuh.Id,
                 UserId = user1.Id,
                 CreatedDate = DateTime.Now
             };
@@ -345,247 +213,7 @@ namespace DersSunumSistemi.Data
             context.Instructors.Add(instructor1);
             await context.SaveChangesAsync();
 
-            // YBS Hocası
-            var user2 = new User
-            {
-                UserName = "ayse.kaya",
-                Email = "ayse.kaya@university.edu.tr",
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword("pass123"),
-                FullName = "Doç. Dr. Ayşe Kaya",
-                Role = UserRole.Instructor,
-                IsActive = true,
-                CreatedDate = DateTime.Now
-            };
-
-            context.Users.Add(user2);
-            await context.SaveChangesAsync();
-
-            var instructor2 = new Instructor
-            {
-                FullName = "Doç. Dr. Ayşe Kaya",
-                Email = "ayse.kaya@university.edu.tr",
-                Phone = "+90 555 222 2222",
-                Title = "Doç. Dr.",
-                Bio = "Bilişim sistemleri ve yönetim alanında uzman",
-                DepartmentId = ybs.Id,
-                UserId = user2.Id,
-                CreatedDate = DateTime.Now
-            };
-
-            context.Instructors.Add(instructor2);
-            await context.SaveChangesAsync();
-
-            // İnşaat Hocası
-            var user3 = new User
-            {
-                UserName = "mehmet.demir",
-                Email = "mehmet.demir@university.edu.tr",
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword("pass123"),
-                FullName = "Dr. Öğr. Üyesi Mehmet Demir",
-                Role = UserRole.Instructor,
-                IsActive = true,
-                CreatedDate = DateTime.Now
-            };
-
-            context.Users.Add(user3);
-            await context.SaveChangesAsync();
-
-            var instructor3 = new Instructor
-            {
-                FullName = "Dr. Öğr. Üyesi Mehmet Demir",
-                Email = "mehmet.demir@university.edu.tr",
-                Phone = "+90 555 333 3333",
-                Title = "Dr. Öğr. Üyesi",
-                Bio = "Yapı mühendisliği ve statik hesaplamalar",
-                DepartmentId = yapiMuh.Id,
-                UserId = user3.Id,
-                CreatedDate = DateTime.Now
-            };
-
-            context.Instructors.Add(instructor3);
-            await context.SaveChangesAsync();
-
-            // Elektronik Hocası
-            var user4 = new User
-            {
-                UserName = "fatma.ozturk",
-                Email = "fatma.ozturk@university.edu.tr",
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword("pass123"),
-                FullName = "Prof. Dr. Fatma Öztürk",
-                Role = UserRole.Instructor,
-                IsActive = true,
-                CreatedDate = DateTime.Now
-            };
-
-            context.Users.Add(user4);
-            await context.SaveChangesAsync();
-
-            var instructor4 = new Instructor
-            {
-                FullName = "Prof. Dr. Fatma Öztürk",
-                Email = "fatma.ozturk@university.edu.tr",
-                Phone = "+90 555 444 4444",
-                Title = "Prof. Dr.",
-                Bio = "Elektronik devre tasarımı ve gömülü sistemler",
-                DepartmentId = elektronikBolumu.Id,
-                UserId = user4.Id,
-                CreatedDate = DateTime.Now
-            };
-
-            context.Instructors.Add(instructor4);
-            await context.SaveChangesAsync();
-
-            // Tıp Hocası
-            var user5 = new User
-            {
-                UserName = "ali.celik",
-                Email = "ali.celik@university.edu.tr",
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword("pass123"),
-                FullName = "Prof. Dr. Ali Çelik",
-                Role = UserRole.Instructor,
-                IsActive = true,
-                CreatedDate = DateTime.Now
-            };
-
-            context.Users.Add(user5);
-            await context.SaveChangesAsync();
-
-            var instructor5 = new Instructor
-            {
-                FullName = "Prof. Dr. Ali Çelik",
-                Email = "ali.celik@university.edu.tr",
-                Phone = "+90 555 555 5555",
-                Title = "Prof. Dr.",
-                Bio = "İç hastalıkları ve kardiyoloji uzmanı",
-                DepartmentId = icHastaliklari.Id,
-                UserId = user5.Id,
-                CreatedDate = DateTime.Now
-            };
-
-            context.Instructors.Add(instructor5);
-            await context.SaveChangesAsync();
-
-            // Cerrahi Hocası
-            var user6 = new User
-            {
-                UserName = "zeynep.arslan",
-                Email = "zeynep.arslan@university.edu.tr",
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword("pass123"),
-                FullName = "Doç. Dr. Zeynep Arslan",
-                Role = UserRole.Instructor,
-                IsActive = true,
-                CreatedDate = DateTime.Now
-            };
-
-            context.Users.Add(user6);
-            await context.SaveChangesAsync();
-
-            var instructor6 = new Instructor
-            {
-                FullName = "Doç. Dr. Zeynep Arslan",
-                Email = "zeynep.arslan@university.edu.tr",
-                Phone = "+90 555 666 6666",
-                Title = "Doç. Dr.",
-                Bio = "Genel cerrahi ve minimal invaziv cerrahi",
-                DepartmentId = genelCerrahi.Id,
-                UserId = user6.Id,
-                CreatedDate = DateTime.Now
-            };
-
-            context.Instructors.Add(instructor6);
-            await context.SaveChangesAsync();
-
-            // Ziraat Hocası
-            var user7 = new User
-            {
-                UserName = "mustafa.koc",
-                Email = "mustafa.koc@university.edu.tr",
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword("pass123"),
-                FullName = "Dr. Öğr. Üyesi Mustafa Koç",
-                Role = UserRole.Instructor,
-                IsActive = true,
-                CreatedDate = DateTime.Now
-            };
-
-            context.Users.Add(user7);
-            await context.SaveChangesAsync();
-
-            var instructor7 = new Instructor
-            {
-                FullName = "Dr. Öğr. Üyesi Mustafa Koç",
-                Email = "mustafa.koc@university.edu.tr",
-                Phone = "+90 555 777 7777",
-                Title = "Dr. Öğr. Üyesi",
-                Bio = "Tarımsal sulama sistemleri ve arazi düzenlemesi",
-                DepartmentId = tarimsal.Id,
-                UserId = user7.Id,
-                CreatedDate = DateTime.Now
-            };
-
-            context.Instructors.Add(instructor7);
-            await context.SaveChangesAsync();
-
-            // Veteriner Hocası
-            var user8 = new User
-            {
-                UserName = "elif.yildiz",
-                Email = "elif.yildiz@university.edu.tr",
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword("pass123"),
-                FullName = "Prof. Dr. Elif Yıldız",
-                Role = UserRole.Instructor,
-                IsActive = true,
-                CreatedDate = DateTime.Now
-            };
-
-            context.Users.Add(user8);
-            await context.SaveChangesAsync();
-
-            var instructor8 = new Instructor
-            {
-                FullName = "Prof. Dr. Elif Yıldız",
-                Email = "elif.yildiz@university.edu.tr",
-                Phone = "+90 555 888 8888",
-                Title = "Prof. Dr.",
-                Bio = "Veteriner klinik ve hayvan hastalıkları uzmanı",
-                DepartmentId = hayvanSagligi.Id,
-                UserId = user8.Id,
-                CreatedDate = DateTime.Now
-            };
-
-            context.Instructors.Add(instructor8);
-            await context.SaveChangesAsync();
-
-            // MYO Hocası
-            var user9 = new User
-            {
-                UserName = "can.sahin",
-                Email = "can.sahin@university.edu.tr",
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword("pass123"),
-                FullName = "Öğr. Gör. Can Şahin",
-                Role = UserRole.Instructor,
-                IsActive = true,
-                CreatedDate = DateTime.Now
-            };
-
-            context.Users.Add(user9);
-            await context.SaveChangesAsync();
-
-            var instructor9 = new Instructor
-            {
-                FullName = "Öğr. Gör. Can Şahin",
-                Email = "can.sahin@university.edu.tr",
-                Phone = "+90 555 999 9999",
-                Title = "Öğr. Gör.",
-                Bio = "Web teknolojileri ve frontend geliştirme",
-                DepartmentId = webProgramlama.Id,
-                UserId = user9.Id,
-                CreatedDate = DateTime.Now
-            };
-
-            context.Instructors.Add(instructor9);
-            await context.SaveChangesAsync();
-
-            // 6. Dersler
+            // 7. Örnek ders
             var course1 = new Course
             {
                 Name = "Veri Yapıları ve Algoritmalar",
@@ -598,139 +226,11 @@ namespace DersSunumSistemi.Data
                 IsActive = true,
                 CreatedDate = DateTime.Now,
                 CategoryId = kategori2.Id,
-                DepartmentId = yazilimBolumu.Id,
+                DepartmentId = yazilimMuh.Id,
                 InstructorId = instructor1.Id
             };
 
-            var course2 = new Course
-            {
-                Name = "Veritabanı Yönetim Sistemleri",
-                Code = "YBS301",
-                Description = "İlişkisel veritabanı tasarımı ve SQL",
-                Syllabus = "ER Diagram, Normalizasyon, SQL, Transaction, Index",
-                Credits = 3,
-                Semester = "Bahar",
-                Year = 2024,
-                IsActive = true,
-                CreatedDate = DateTime.Now,
-                CategoryId = kategori2.Id,
-                DepartmentId = ybs.Id,
-                InstructorId = instructor2.Id
-            };
-
-            var course3 = new Course
-            {
-                Name = "Statik ve Mukavemet",
-                Code = "INS201",
-                Description = "Yapılarda statik hesaplamalar ve mukavemet analizi",
-                Syllabus = "Kuvvet, Moment, Gerilme, Gerinim, Mukavemet",
-                Credits = 4,
-                Semester = "Güz",
-                Year = 2024,
-                IsActive = true,
-                CreatedDate = DateTime.Now,
-                CategoryId = kategori2.Id,
-                DepartmentId = yapiMuh.Id,
-                InstructorId = instructor3.Id
-            };
-
-            var course4 = new Course
-            {
-                Name = "Elektronik Devre Tasarımı",
-                Code = "ELK301",
-                Description = "Analog ve dijital devre tasarımı",
-                Syllabus = "Transistör, Op-Amp, Dijital Kapılar, PCB Tasarım",
-                Credits = 3,
-                Semester = "Bahar",
-                Year = 2024,
-                IsActive = true,
-                CreatedDate = DateTime.Now,
-                CategoryId = kategori2.Id,
-                DepartmentId = elektronikBolumu.Id,
-                InstructorId = instructor4.Id
-            };
-
-            var course5 = new Course
-            {
-                Name = "İç Hastalıkları Klinik Uygulamalar",
-                Code = "TIP401",
-                Description = "İç hastalıkları tanı ve tedavi yöntemleri",
-                Syllabus = "Kardiyoloji, Endokrinoloji, Gastroenteroloji",
-                Credits = 5,
-                Semester = "Güz",
-                Year = 2024,
-                IsActive = true,
-                CreatedDate = DateTime.Now,
-                CategoryId = kategori3.Id,
-                DepartmentId = icHastaliklari.Id,
-                InstructorId = instructor5.Id
-            };
-
-            var course6 = new Course
-            {
-                Name = "Cerrahi Teknikler",
-                Code = "CER301",
-                Description = "Temel cerrahi teknikler ve uygulamalar",
-                Syllabus = "Sterilizasyon, Dikiş Teknikleri, Minimal İnvaziv Cerrahi",
-                Credits = 4,
-                Semester = "Bahar",
-                Year = 2024,
-                IsActive = true,
-                CreatedDate = DateTime.Now,
-                CategoryId = kategori3.Id,
-                DepartmentId = genelCerrahi.Id,
-                InstructorId = instructor6.Id
-            };
-
-            var course7 = new Course
-            {
-                Name = "Sulama Sistemleri",
-                Code = "ZIR201",
-                Description = "Tarımsal sulama sistemleri tasarımı",
-                Syllabus = "Damla Sulama, Yağmurlama, Drenaj Sistemleri",
-                Credits = 3,
-                Semester = "Güz",
-                Year = 2024,
-                IsActive = true,
-                CreatedDate = DateTime.Now,
-                CategoryId = kategori4.Id,
-                DepartmentId = tarimsal.Id,
-                InstructorId = instructor7.Id
-            };
-
-            var course8 = new Course
-            {
-                Name = "Veteriner Klinik Uygulamaları",
-                Code = "VET301",
-                Description = "Hayvan hastalıkları teşhis ve tedavi",
-                Syllabus = "Büyükbaş, Küçükbaş, Kanatlı Hayvan Hastalıkları",
-                Credits = 4,
-                Semester = "Bahar",
-                Year = 2024,
-                IsActive = true,
-                CreatedDate = DateTime.Now,
-                CategoryId = kategori4.Id,
-                DepartmentId = hayvanSagligi.Id,
-                InstructorId = instructor8.Id
-            };
-
-            var course9 = new Course
-            {
-                Name = "Web Programlama Temelleri",
-                Code = "WEB101",
-                Description = "HTML, CSS, JavaScript ile web geliştirme",
-                Syllabus = "HTML5, CSS3, JavaScript, Bootstrap, Responsive Design",
-                Credits = 3,
-                Semester = "Güz",
-                Year = 2024,
-                IsActive = true,
-                CreatedDate = DateTime.Now,
-                CategoryId = kategori2.Id,
-                DepartmentId = webProgramlama.Id,
-                InstructorId = instructor9.Id
-            };
-
-            context.Courses.AddRange(course1, course2, course3, course4, course5, course6, course7, course8, course9);
+            context.Courses.Add(course1);
             await context.SaveChangesAsync();
         }
     }
