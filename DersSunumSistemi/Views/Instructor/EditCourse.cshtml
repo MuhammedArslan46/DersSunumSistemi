@@ -40,10 +40,13 @@
                             <div class="col-md-4 mb-3">
                                 <label for="categoryId" class="form-label">Kategori</label>
                                 <select class="form-select" id="categoryId" name="categoryId" required>
-                                    @foreach (var category in ViewBag.Categories as List<DersSunumSistemi.Models.Category>)
+                                    @if (ViewBag.Categories != null)
                                     {
-                                        var isSelected = Model.CategoryId == category.Id;
-                                        <option value="@category.Id" selected="@isSelected">@category.Name</option>
+                                        @foreach (var category in ViewBag.Categories as List<DersSunumSistemi.Models.Category>)
+                                        {
+                                            var isSelected = Model!.CategoryId == category.Id;
+                                            <option value="@category.Id" selected="@isSelected">@category.Name</option>
+                                        }
                                     }
                                 </select>
                             </div>

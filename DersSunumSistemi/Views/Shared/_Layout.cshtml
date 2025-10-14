@@ -64,11 +64,17 @@
                                 </div>
                             </div>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Home" asp-action="Instructors">
-                                <i class="bi bi-person-badge"></i> Akademisyenler
-                            </a>
-                        </li>
+                        @{
+                            var userRole = User.Claims.FirstOrDefault(c => c.Type == "Role")?.Value;
+                        }
+                        @if (userRole == "Admin")
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Home" asp-action="Instructors">
+                                    <i class="bi bi-person-badge"></i> Akademisyenler
+                                </a>
+                            </li>
+                        }
                     </ul>
                 }
 

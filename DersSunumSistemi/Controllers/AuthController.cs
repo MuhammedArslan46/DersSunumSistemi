@@ -84,7 +84,7 @@ namespace DersSunumSistemi.Controllers
             ViewBag.Departments = await _context.Departments
                 .Include(d => d.Faculty)
                 .ThenInclude(f => f!.Institution)
-                .OrderBy(d => d.Faculty!.Institution.Name)
+                .OrderBy(d => d.Faculty!.Institution!.Name)
                 .ThenBy(d => d.Faculty!.Name)
                 .ThenBy(d => d.Name)
                 .ToListAsync();

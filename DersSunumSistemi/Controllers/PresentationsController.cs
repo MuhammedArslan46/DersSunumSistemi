@@ -3,9 +3,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DersSunumSistemi.Data;
 using DersSunumSistemi.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DersSunumSistemi.Controllers
 {
+    [Authorize(Policy = "AdminOnly")]
     public class PresentationsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -17,20 +19,12 @@ namespace DersSunumSistemi.Controllers
             _webHostEnvironment = webHostEnvironment;
         }
 
-        private bool IsAdmin()
-        {
-            return HttpContext.Session.GetString("IsAdmin") == "true";
-        }
-
         // Liste
         public async Task<IActionResult> Index()
         {
-            if (!IsAdmin())
-                return RedirectToAction("Login", "Admin");
-
             var presentations = await _context.Presentations
                 .Include(p => p.Course)
-                .ThenInclude(c => c.Category)
+                .ThenInclude(c => c!.Category)
                 .OrderByDescending(p => p.UploadDate)
                 .ToListAsync();
 
@@ -40,9 +34,6 @@ namespace DersSunumSistemi.Controllers
         // Create GET
         public IActionResult Create(int? courseId)
         {
-            if (!IsAdmin())
-                return RedirectToAction("Login", "Admin");
-
             ViewBag.Courses = new SelectList(_context.Courses.Include(c => c.Category), "Id", "Name", courseId);
 
             if (courseId.HasValue)
@@ -58,9 +49,6 @@ namespace DersSunumSistemi.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Presentation presentation, IFormFile? file)
         {
-            if (!IsAdmin())
-                return RedirectToAction("Login", "Admin");
-
             if (ModelState.IsValid)
             {
                 // Dosya yükleme
@@ -102,9 +90,6 @@ namespace DersSunumSistemi.Controllers
         // Edit GET
         public async Task<IActionResult> Edit(int? id)
         {
-            if (!IsAdmin())
-                return RedirectToAction("Login", "Admin");
-
             if (id == null)
                 return NotFound();
 
@@ -121,9 +106,6 @@ namespace DersSunumSistemi.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Presentation presentation, IFormFile? file)
         {
-            if (!IsAdmin())
-                return RedirectToAction("Login", "Admin");
-
             if (id != presentation.Id)
                 return NotFound();
 
@@ -183,15 +165,12 @@ namespace DersSunumSistemi.Controllers
         // Delete GET
         public async Task<IActionResult> Delete(int? id)
         {
-            if (!IsAdmin())
-                return RedirectToAction("Login", "Admin");
-
             if (id == null)
                 return NotFound();
 
             var presentation = await _context.Presentations
                 .Include(p => p.Course)
-                .ThenInclude(c => c.Category)
+                .ThenInclude(c => c!.Category)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             if (presentation == null)
@@ -205,9 +184,6 @@ namespace DersSunumSistemi.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (!IsAdmin())
-                return RedirectToAction("Login", "Admin");
-
             var presentation = await _context.Presentations.FindAsync(id);
             if (presentation != null)
             {

@@ -61,9 +61,12 @@
                                 <label for="studentDepartmentId" class="form-label">Öğrenci Bölümü *</label>
                                 <select class="form-select" id="studentDepartmentId" name="studentDepartmentId">
                                     <option value="">Bölüm Seçin</option>
-                                    @foreach (var dept in ViewBag.Departments as List<DersSunumSistemi.Models.Department>)
+                                    @if (ViewBag.Departments != null)
                                     {
-                                        <option value="@dept.Id">@dept.Name - @dept.Faculty?.Name</option>
+                                        @foreach (var dept in ViewBag.Departments as List<DersSunumSistemi.Models.Department>)
+                                        {
+                                            <option value="@dept.Id">@dept.Name - @dept.Faculty!.Name</option>
+                                        }
                                     }
                                 </select>
                             </div>
@@ -79,9 +82,12 @@
                                 <label for="departmentId" class="form-label">Bölüm</label>
                                 <select class="form-select" id="departmentId" name="departmentId">
                                     <option value="">Bölüm Seçin</option>
-                                    @foreach (var dept in ViewBag.Departments as List<DersSunumSistemi.Models.Department>)
+                                    @if (ViewBag.Departments != null)
                                     {
-                                        <option value="@dept.Id">@dept.Name</option>
+                                        @foreach (var dept in ViewBag.Departments as List<DersSunumSistemi.Models.Department>)
+                                        {
+                                            <option value="@dept.Id">@dept.Name - @dept.Faculty!.Name</option>
+                                        }
                                     }
                                 </select>
                             </div>

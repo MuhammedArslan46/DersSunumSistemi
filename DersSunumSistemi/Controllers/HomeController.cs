@@ -194,7 +194,7 @@ public class HomeController : Controller
         return View(department);
     }
 
-    [Authorize]
+    [Authorize(Policy = "AdminOnly")]
     public async Task<IActionResult> Instructors()
     {
         var instructors = await _context.Instructors
