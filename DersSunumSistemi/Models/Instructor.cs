@@ -11,6 +11,11 @@ namespace DersSunumSistemi.Models
         public string? ImagePath { get; set; }
         public DateTime CreatedDate { get; set; }
 
+        // Akademisyen durum bilgileri
+        public bool IsActive { get; set; } = true; // Aktif/Pasif durumu
+        public DateTime? StartDate { get; set; } // İşe başlama tarihi
+        public DateTime? EndDate { get; set; } // İşten ayrılma tarihi (varsa)
+
         // Hangi bölüme ait
         public int DepartmentId { get; set; }
         public Department? Department { get; set; }

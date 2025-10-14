@@ -10,11 +10,13 @@
             <div class="col-lg-6">
                 <div class="login-form-side">
                     <div class="login-header text-center mb-4">
-                        <div class="login-icon mb-3">
-                            <i class="bi bi-mortarboard-fill"></i>
+                        <div class="login-logo mb-3">
+                            <img src="~/images.png" alt="MTÜ Logo" height="80" />
                         </div>
                         <h2 class="fw-bold mb-2" style="background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Hoş Geldiniz</h2>
-                        <p class="text-muted">Lisansüstü Ders Platformu'na giriş yapın</p>
+                        <h5 class="text-primary fw-bold mb-1">MTÜ Dersleri Platformu</h5>
+                        <p class="text-muted small">Malatya Turgut Özal Üniversitesi</p>
+                        <p class="text-muted small">Lisansüstü Eğitim Enstitüsü</p>
                     </div>
 
                     @if (ViewBag.Error != null)
@@ -56,70 +58,38 @@
                 </div>
             </div>
 
-            <!-- Right Side - Welcome & Demo Accounts -->
+            <!-- Right Side - Welcome -->
             <div class="col-lg-6">
                 <div class="login-info-side">
-                    <div class="info-content">
-                        <h3 class="fw-bold mb-4">Akademik Başarınız İçin</h3>
-                        <p class="mb-4">Lisansüstü eğitim materyallerine kolayca erişin, derslerinizi takip edin ve akademik başarınızı artırın.</p>
-
-                        <div class="features mb-5">
-                            <div class="feature-item">
-                                <i class="bi bi-check-circle-fill me-2"></i>
-                                <span>Ders Materyallerine Anında Erişim</span>
-                            </div>
-                            <div class="feature-item">
-                                <i class="bi bi-check-circle-fill me-2"></i>
-                                <span>Akademisyenlerinizi Takip Edin</span>
-                            </div>
-                            <div class="feature-item">
-                                <i class="bi bi-check-circle-fill me-2"></i>
-                                <span>Güncel Ders İçerikleri</span>
-                            </div>
+                    <div class="info-content text-center">
+                        <div class="mb-5">
+                            <img src="~/images.png" alt="MTÜ Logo" height="120" class="mb-4" style="background: white; padding: 15px; border-radius: 20px;" />
+                            <h3 class="fw-bold mb-3">Malatya Turgut Özal Üniversitesi</h3>
+                            <h5 class="mb-3" style="color: var(--accent-color);">Lisansüstü Eğitim Enstitüsü</h5>
+                            <p class="mb-4 px-4">Ders Materyalleri Platformu</p>
                         </div>
 
-                        <div class="demo-accounts">
-                            <h6 class="fw-bold mb-3">
-                                <i class="bi bi-key-fill me-2"></i>Demo Hesaplar
-                                <small class="d-block mt-2 fw-normal" style="font-size: 0.85rem; opacity: 0.9;">
-                                    <i class="bi bi-info-circle me-1"></i>Tıklayarak otomatik doldur
-                                </small>
-                            </h6>
-                            <div class="demo-card mb-2">
-                                <div class="d-flex align-items-center">
-                                    <div class="demo-icon bg-danger">
-                                        <i class="bi bi-shield-fill-check"></i>
-                                    </div>
-                                    <div class="ms-3">
-                                        <strong class="d-block">Admin</strong>
-                                        <small class="text-white-50">admin / admin123</small>
-                                    </div>
-                                    <i class="bi bi-arrow-right ms-auto" style="font-size: 1.2rem; opacity: 0.7;"></i>
+                        <div class="features">
+                            <div class="feature-item mb-4">
+                                <div class="feature-icon-wrapper mb-3">
+                                    <i class="bi bi-book-fill" style="font-size: 2.5rem;"></i>
                                 </div>
+                                <h6 class="fw-bold mb-2">Ders Materyallerine Erişim</h6>
+                                <p class="small" style="opacity: 0.9;">Lisansüstü ders materyallerine kolayca erişin</p>
                             </div>
-                            <div class="demo-card mb-2">
-                                <div class="d-flex align-items-center">
-                                    <div class="demo-icon bg-success">
-                                        <i class="bi bi-person-badge"></i>
-                                    </div>
-                                    <div class="ms-3">
-                                        <strong class="d-block">Akademisyen</strong>
-                                        <small class="text-white-50">ahmet.yilmaz / instructor123</small>
-                                    </div>
-                                    <i class="bi bi-arrow-right ms-auto" style="font-size: 1.2rem; opacity: 0.7;"></i>
+                            <div class="feature-item mb-4">
+                                <div class="feature-icon-wrapper mb-3">
+                                    <i class="bi bi-person-workspace" style="font-size: 2.5rem;"></i>
                                 </div>
+                                <h6 class="fw-bold mb-2">Akademisyenlerinizi Takip Edin</h6>
+                                <p class="small" style="opacity: 0.9;">Hocalarınızın paylaştığı güncel içeriklere ulaşın</p>
                             </div>
-                            <div class="demo-card">
-                                <div class="d-flex align-items-center">
-                                    <div class="demo-icon bg-info">
-                                        <i class="bi bi-person-circle"></i>
-                                    </div>
-                                    <div class="ms-3">
-                                        <strong class="d-block">Öğrenci</strong>
-                                        <small class="text-white-50">mehmet.kaya / student123</small>
-                                    </div>
-                                    <i class="bi bi-arrow-right ms-auto" style="font-size: 1.2rem; opacity: 0.7;"></i>
+                            <div class="feature-item">
+                                <div class="feature-icon-wrapper mb-3">
+                                    <i class="bi bi-cloud-download-fill" style="font-size: 2.5rem;"></i>
                                 </div>
+                                <h6 class="fw-bold mb-2">İndir ve Çalış</h6>
+                                <p class="small" style="opacity: 0.9;">Tüm materyalleri cihazınıza indirin</p>
                             </div>
                         </div>
                     </div>

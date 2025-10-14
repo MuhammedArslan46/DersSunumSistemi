@@ -207,7 +207,9 @@ namespace DersSunumSistemi.Data
                 Bio = "Yazılım mühendisliği alanında 20 yıllık deneyim",
                 DepartmentId = yazilimMuh.Id,
                 UserId = user1.Id,
-                CreatedDate = DateTime.Now
+                CreatedDate = DateTime.Now,
+                IsActive = true,
+                StartDate = new DateTime(2020, 9, 1) // 1 Eylül 2020'de işe başladı
             };
 
             context.Instructors.Add(instructor1);

@@ -1,0 +1,213 @@
+@{
+    ViewData["Title"] = "Ders Atama";
+    var instructors = ViewBag.Instructors as List<DersSunumSistemi.Models.Instructor>;
+    var courses = ViewBag.Courses as List<DersSunumSistemi.Models.Course>;
+}
+
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2><i class="bi bi-person-plus-fill"></i> Ders Atama</h2>
+            <p class="text-muted">Akademisyenlere ders atayın veya atamalarını kaldırın</p>
+        </div>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Geri
+        </a>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i>@TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>@TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row">
+        <!-- Akademisyenler ve Dersleri -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-person-badge"></i> Akademisyenler ve Dersleri</h5>
+                </div>
+                <div class="card-body">
+                    @if (instructors != null && instructors.Any())
+                    {
+                        <div class="accordion" id="instructorAccordion">
+                            @foreach (var instructor in instructors)
+                            {
+                                var assignedCourses = courses?.Where(c => c.InstructorId == instructor.Id).ToList() ?? new List<DersSunumSistemi.Models.Course>();
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="heading-@instructor.Id">
+                                        <button class="accordion-button @(assignedCourses.Any() ? "" : "collapsed")" type="button"
+                                                data-bs-toggle="collapse" data-bs-target="#collapse-@instructor.Id">
+                                            <div class="d-flex justify-content-between align-items-center w-100 me-3">
+                                                <div>
+                                                    <strong>@instructor.FullName</strong>
+                                                    @if (!string.IsNullOrEmpty(instructor.Title))
+                                                    {
+                                                        <span class="text-muted"> - @instructor.Title</span>
+                                                    }
+                                                </div>
+                                                <span class="badge bg-primary rounded-pill">@assignedCourses.Count ders</span>
+                                            </div>
+                                        </button>
+                                    </h2>
+                                    <div id="collapse-@instructor.Id" class="accordion-collapse collapse @(assignedCourses.Any() ? "show" : "")"
+                                         data-bs-parent="#instructorAccordion">
+                                        <div class="accordion-body">
+                                            @if (assignedCourses.Any())
+                                            {
+                                                <ul class="list-group">
+                                                    @foreach (var course in assignedCourses)
+                                                    {
+                                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                            <div>
+                                                                <strong>@course.Code</strong> - @course.Name
+                                                                <br><small class="text-muted">@course.Category?.Name</small>
+                                                            </div>
+                                                            <form method="post" asp-action="UnassignCourse" class="d-inline">
+                                                                <input type="hidden" name="courseId" value="@course.Id" />
+                                                                <button type="submit" class="btn btn-sm btn-danger"
+                                                                        onclick="return confirm('Bu dersi akademisyenden kaldırmak istediğinize emin misiniz?')">
+                                                                    <i class="bi bi-x-circle"></i> Kaldır
+                                                                </button>
+                                                            </form>
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            }
+                                            else
+                                            {
+                                                <p class="text-muted mb-0"><i class="bi bi-info-circle"></i> Bu akademisyene henüz ders atanmamış.</p>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted"><i class="bi bi-info-circle"></i> Aktif akademisyen bulunamadı.</p>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Tüm Dersler ve Atama -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="bi bi-book"></i> Tüm Dersler</h5>
+                </div>
+                <div class="card-body">
+                    @if (courses != null && courses.Any())
+                    {
+                        <div class="mb-3">
+                            <input type="text" id="courseSearch" class="form-control" placeholder="Ders ara...">
+                        </div>
+                        <div class="list-group" id="courseList" style="max-height: 600px; overflow-y: auto;">
+                            @foreach (var course in courses)
+                            {
+                                <div class="list-group-item course-item">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <div>
+                                            <h6 class="mb-1"><strong>@course.Code</strong> - @course.Name</h6>
+                                            <small class="text-muted">
+                                                @course.Category?.Name | @course.Department?.Name
+                                            </small>
+                                        </div>
+                                    </div>
+
+                                    @if (course.Instructor != null)
+                                    {
+                                        <div class="alert alert-info mb-2 py-2">
+                                            <i class="bi bi-person-check-fill"></i>
+                                            <strong>@course.Instructor.FullName</strong> tarafından veriliyor
+                                        </div>
+                                    }
+
+                                    <form method="post" asp-action="AssignCourse" class="d-flex gap-2">
+                                        <input type="hidden" name="courseId" value="@course.Id" />
+                                        <select name="instructorId" class="form-select form-select-sm" required>
+                                            <option value="">Akademisyen seçin...</option>
+                                            @if (instructors != null)
+                                            {
+                                                @foreach (var instructor in instructors)
+                                                {
+                                                    var isSelected = course.InstructorId == instructor.Id;
+                                                    var instructorDisplay = instructor.FullName;
+                                                    if (!string.IsNullOrEmpty(instructor.Title))
+                                                    {
+                                                        instructorDisplay += " - " + instructor.Title;
+                                                    }
+
+                                                    @if (isSelected)
+                                                    {
+                                                        <option value="@instructor.Id" selected>@instructorDisplay</option>
+                                                    }
+                                                    else
+                                                    {
+                                                        <option value="@instructor.Id">@instructorDisplay</option>
+                                                    }
+                                                }
+                                            }
+                                        </select>
+                                        <button type="submit" class="btn btn-sm btn-primary">
+                                            <i class="bi bi-check-circle"></i> Ata
+                                        </button>
+                                    </form>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted"><i class="bi bi-info-circle"></i> Ders bulunamadı.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Ders arama fonksiyonu
+    document.getElementById('courseSearch')?.addEventListener('keyup', function() {
+        const searchValue = this.value.toLowerCase();
+        const courseItems = document.querySelectorAll('.course-item');
+
+        courseItems.forEach(item => {
+            const text = item.textContent.toLowerCase();
+            if (text.includes(searchValue)) {
+                item.style.display = '';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    });
+</script>
+
+<style>
+.accordion-button:not(.collapsed) {
+    background-color: var(--primary-light);
+    color: var(--primary-dark);
+}
+
+.course-item {
+    transition: all 0.2s ease;
+}
+
+.course-item:hover {
+    background-color: var(--gray-100);
+}
+</style>

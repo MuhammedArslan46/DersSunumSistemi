@@ -1,17 +1,17 @@
-/* Global Styles - University Theme (Özal Inspired) */
+/* Global Styles - Malatya Turgut Özal University Theme */
 :root {
-    --primary-color: #003d82;
-    --primary-dark: #002856;
-    --primary-light: #1a5ca8;
-    --secondary-color: #e63946;
-    --accent-color: #f77f00;
-    --success-color: #06a77d;
-    --info-color: #0077b6;
-    --warning-color: #f59e0b;
-    --danger-color: #dc2f02;
-    --light-color: #f8f9fa;
-    --dark-color: #212529;
-    --gray-50: #f8f9fa;
+    --primary-color: #1a3a7e;        /* Lacivert - Ana renk */
+    --primary-dark: #0f2350;         /* Koyu lacivert */
+    --primary-light: #2e5cb8;        /* Açık lacivert */
+    --secondary-color: #c41e3a;      /* Bordo/Kırmızı - Vurgu rengi */
+    --accent-color: #d4af37;         /* Altın sarısı - Aksan */
+    --success-color: #28a745;        /* Yeşil */
+    --info-color: #17a2b8;           /* Bilgi mavisi */
+    --warning-color: #ffc107;        /* Uyarı sarısı */
+    --danger-color: #dc3545;         /* Hata kırmızısı */
+    --light-color: #f8f9fa;          /* Açık gri */
+    --dark-color: #212529;           /* Koyu gri */
+    --gray-50: #fafbfc;
     --gray-100: #f1f3f5;
     --gray-200: #e9ecef;
     --gray-300: #dee2e6;
@@ -130,7 +130,7 @@ body {
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, var(--primary-color) 0%, #3b82f6 100%);
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
     color: white;
     box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 }
@@ -138,7 +138,7 @@ body {
 .btn-primary:hover {
     background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-color) 100%);
     transform: translateY(-2px);
-    box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.4), 0 4px 6px -2px rgba(37, 99, 235, 0.2);
+    box-shadow: 0 10px 15px -3px rgba(26, 58, 126, 0.4), 0 4px 6px -2px rgba(26, 58, 126, 0.2);
 }
 
 .btn-outline-primary {
@@ -172,8 +172,8 @@ body {
 
 .form-control:focus,
 .form-select:focus {
-    border-color: #667eea;
-    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(26, 58, 126, 0.25);
 }
 
 /* Search Bar */
@@ -203,7 +203,7 @@ body {
 .course-card .card-img-top {
     height: 180px;
     object-fit: cover;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
 }
 
 .course-card .card-body {
@@ -226,7 +226,7 @@ body {
     height: 120px;
     border-radius: 50%;
     margin: 0 auto 1rem;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -255,7 +255,7 @@ body {
 }
 
 .stats-card.primary .stats-icon {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
 }
 
 .stats-card.success .stats-icon {
@@ -389,15 +389,15 @@ footer {
 }
 
 .mega-menu .list-group-item:hover {
-    background: linear-gradient(to right, #eff6ff 0%, #dbeafe 100%);
+    background: linear-gradient(to right, rgba(26, 58, 126, 0.05) 0%, rgba(26, 58, 126, 0.1) 100%);
     padding-left: 1.75rem;
     color: var(--primary-color);
 }
 
 .mega-menu .list-group-item.active {
-    background: linear-gradient(to right, #dbeafe 0%, #bfdbfe 100%);
+    background: linear-gradient(to right, rgba(26, 58, 126, 0.1) 0%, rgba(26, 58, 126, 0.15) 100%);
     color: var(--primary-color);
-    border-left: 4px solid var(--primary-color);
+    border-left: 4px solid var(--secondary-color);
     font-weight: 600;
 }
 
@@ -426,7 +426,7 @@ footer {
     left: 0;
     width: 370px;
     height: calc(100vh - 70px);
-    background: #2c3e50;
+    background: linear-gradient(180deg, var(--primary-dark) 0%, #001f3f 100%);
     overflow-y: auto;
     overflow-x: hidden;
     z-index: 1000;
@@ -482,16 +482,16 @@ footer {
 }
 
 .sidebar-wrapper::-webkit-scrollbar-track {
-    background: #1a252f;
+    background: rgba(0, 0, 0, 0.2);
 }
 
 .sidebar-wrapper::-webkit-scrollbar-thumb {
-    background: #34495e;
+    background: rgba(255, 255, 255, 0.2);
     border-radius: 4px;
 }
 
 .sidebar-wrapper::-webkit-scrollbar-thumb:hover {
-    background: #4a5f7f;
+    background: rgba(255, 255, 255, 0.3);
 }
 
 .main-content-wrapper {
@@ -540,7 +540,7 @@ footer {
     top: 0;
     bottom: 0;
     width: 0;
-    background: #c41e3a;
+    background: var(--secondary-color);
     transition: width 0.3s ease;
 }
 
@@ -607,7 +607,7 @@ footer {
     top: 0;
     bottom: 0;
     width: 0;
-    background: #c41e3a;
+    background: var(--accent-color);
     transition: width 0.3s ease;
 }
 

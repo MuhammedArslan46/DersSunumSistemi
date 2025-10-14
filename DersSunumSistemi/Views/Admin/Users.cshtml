@@ -25,6 +25,7 @@
                             <th>Durum</th>
                             <th>Kayıt Tarihi</th>
                             <th>Son Giriş</th>
+                            <th>İşlemler</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -61,6 +62,24 @@
                                 </td>
                                 <td><small>@user.CreatedDate.ToString("dd.MM.yyyy HH:mm")</small></td>
                                 <td><small>@(user.LastLoginDate?.ToString("dd.MM.yyyy HH:mm") ?? "-")</small></td>
+                                <td>
+                                    @if (user.Role == DersSunumSistemi.Models.UserRole.Instructor && user.Instructor != null)
+                                    {
+                                        <div class="btn-group" role="group">
+                                            <a asp-action="EditInstructor" asp-route-id="@user.Instructor.Id" class="btn btn-sm btn-warning" title="Düzenle">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <button type="button" class="btn btn-sm btn-danger"
+                                                    onclick="confirmDelete(@user.Instructor.Id, '@user.FullName')" title="Sil">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">-</span>
+                                    }
+                                </td>
                             </tr>
                         }
                     </tbody>
@@ -69,3 +88,19 @@
         </div>
     </div>
 </div>
+
+<!-- Silme Formu -->
+<form id="deleteForm" method="post" asp-action="DeleteInstructor" style="display: none;">
+    <input type="hidden" id="deleteId" name="id" />
+</form>
+
+@section Scripts {
+<script>
+    function confirmDelete(id, name) {
+        if (confirm('"{name}" adlı akademisyeni silmek istediğinize emin misiniz? Bu işlem geri alınamaz!')) {
+            document.getElementById('deleteId').value = id;
+            document.getElementById('deleteForm').submit();
+        }
+    }
+</script>
+}

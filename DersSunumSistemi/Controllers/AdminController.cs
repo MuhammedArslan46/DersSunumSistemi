@@ -47,12 +47,14 @@ namespace DersSunumSistemi.Controllers
         [HttpGet]
         public async Task<IActionResult> CreateUser()
         {
-            ViewBag.Departments = await _context.Departments.ToListAsync();
+            ViewBag.Departments = await _context.Departments
+                .Include(d => d.Faculty)
+                .ToListAsync();
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateUser(string userName, string email, string password, string fullName, UserRole role, int? departmentId, int? studentDepartmentId, string? title)
+        public async Task<IActionResult> CreateUser(string userName, string email, string password, string fullName, UserRole role, int? departmentId, int? studentDepartmentId, string? title, bool isActive = true, DateTime? startDate = null, DateTime? endDate = null)
         {
             // Öğrenci için bölüm ID'sini kullan
             int? finalDepartmentId = role == UserRole.Student ? studentDepartmentId : null;
@@ -78,13 +80,96 @@ namespace DersSunumSistemi.Controllers
                     Email = email,
                     Title = title,
                     DepartmentId = departmentId.Value,
-                    CreatedDate = DateTime.Now
+                    CreatedDate = DateTime.Now,
+                    IsActive = isActive,
+                    StartDate = startDate ?? DateTime.Now, // Eğer belirtilmemişse bugün
+                    EndDate = endDate
                 };
                 _context.Instructors.Add(instructor);
                 await _context.SaveChangesAsync();
             }
 
             TempData["Success"] = $"{fullName} başarıyla oluşturuldu!";
+            return RedirectToAction(nameof(Users));
+        }
+
+        // INSTRUCTOR MANAGEMENT
+        [HttpGet]
+        public async Task<IActionResult> EditInstructor(int id)
+        {
+            var instructor = await _context.Instructors
+                .Include(i => i.Department)
+                .Include(i => i.User)
+                .FirstOrDefaultAsync(i => i.Id == id);
+
+            if (instructor == null)
+            {
+                TempData["Error"] = "Akademisyen bulunamadı!";
+                return RedirectToAction(nameof(Users));
+            }
+
+            ViewBag.Departments = await _context.Departments
+                .Include(d => d.Faculty)
+                .ToListAsync();
+            return View(instructor);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditInstructor(int id, string fullName, string email, string? phone, string? title, int departmentId, bool isActive, DateTime? startDate, DateTime? endDate)
+        {
+            var instructor = await _context.Instructors.FindAsync(id);
+            if (instructor == null)
+            {
+                TempData["Error"] = "Akademisyen bulunamadı!";
+                return RedirectToAction(nameof(Users));
+            }
+
+            instructor.FullName = fullName;
+            instructor.Email = email;
+            instructor.Phone = phone;
+            instructor.Title = title;
+            instructor.DepartmentId = departmentId;
+            instructor.IsActive = isActive;
+            instructor.StartDate = startDate;
+            instructor.EndDate = endDate;
+
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = $"{fullName} başarıyla güncellendi!";
+            return RedirectToAction(nameof(Users));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteInstructor(int id)
+        {
+            var instructor = await _context.Instructors
+                .Include(i => i.User)
+                .Include(i => i.Courses)
+                .FirstOrDefaultAsync(i => i.Id == id);
+
+            if (instructor == null)
+            {
+                TempData["Error"] = "Akademisyen bulunamadı!";
+                return RedirectToAction(nameof(Users));
+            }
+
+            // Akademisyenin dersleri varsa uyarı
+            if (instructor.Courses.Any())
+            {
+                TempData["Error"] = $"{instructor.FullName} adlı akademisyenin {instructor.Courses.Count} dersi var. Önce dersleri silmelisiniz!";
+                return RedirectToAction(nameof(Users));
+            }
+
+            // Kullanıcıyı da sil
+            if (instructor.User != null)
+            {
+                _context.Users.Remove(instructor.User);
+            }
+
+            _context.Instructors.Remove(instructor);
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = $"{instructor.FullName} başarıyla silindi!";
             return RedirectToAction(nameof(Users));
         }
 
@@ -122,6 +207,72 @@ namespace DersSunumSistemi.Controllers
                 await _context.SaveChangesAsync();
             }
             return RedirectToAction(nameof(Departments));
+        }
+
+        // COURSE ASSIGNMENT TO INSTRUCTORS
+        [HttpGet]
+        public async Task<IActionResult> AssignCourses()
+        {
+            var instructors = await _context.Instructors
+                .Include(i => i.Department)
+                .Include(i => i.Courses)
+                .Where(i => i.IsActive)
+                .OrderBy(i => i.FullName)
+                .ToListAsync();
+
+            var courses = await _context.Courses
+                .Include(c => c.Instructor)
+                .Include(c => c.Category)
+                .Include(c => c.Department)
+                .OrderBy(c => c.Name)
+                .ToListAsync();
+
+            ViewBag.Instructors = instructors;
+            ViewBag.Courses = courses;
+
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AssignCourse(int courseId, int instructorId)
+        {
+            var course = await _context.Courses.FindAsync(courseId);
+            var instructor = await _context.Instructors.FindAsync(instructorId);
+
+            if (course == null || instructor == null)
+            {
+                TempData["Error"] = "Ders veya akademisyen bulunamadı!";
+                return RedirectToAction(nameof(AssignCourses));
+            }
+
+            course.InstructorId = instructorId;
+            course.UpdatedDate = DateTime.Now;
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = $"{course.Name} dersi {instructor.FullName}'e başarıyla atandı!";
+            return RedirectToAction(nameof(AssignCourses));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UnassignCourse(int courseId)
+        {
+            var course = await _context.Courses
+                .Include(c => c.Instructor)
+                .FirstOrDefaultAsync(c => c.Id == courseId);
+
+            if (course == null)
+            {
+                TempData["Error"] = "Ders bulunamadı!";
+                return RedirectToAction(nameof(AssignCourses));
+            }
+
+            var instructorName = course.Instructor?.FullName ?? "Bilinmeyen";
+            course.InstructorId = 0; // Akademisyenden ayır
+            course.UpdatedDate = DateTime.Now;
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = $"{course.Name} dersi {instructorName}'den kaldırıldı!";
+            return RedirectToAction(nameof(AssignCourses));
         }
 
         // STATISTICS

@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Lisansüstü Ders Platformu</title>
+    <title>@ViewData["Title"] - MTÜ Dersleri Platformu</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
@@ -16,15 +16,21 @@
             @if (User.Identity?.IsAuthenticated == true)
             {
                 <a class="navbar-brand d-flex align-items-center" asp-controller="Home" asp-action="Index">
-                    <i class="bi bi-mortarboard-fill fs-4 me-2"></i>
-                    <span class="fw-bold">Lisansüstü Ders Platformu</span>
+                    <img src="~/images.png" alt="MTÜ Dersleri Platformu" height="50" class="me-3" style="background: white; padding: 5px; border-radius: 8px;" />
+                    <div class="d-flex flex-column">
+                        <span class="fw-bold" style="font-size: 1.1rem; line-height: 1.2;">MTÜ Dersleri Platformu</span>
+                        <small style="font-size: 0.75rem; opacity: 0.9;">Malatya Turgut Özal Üniversitesi</small>
+                    </div>
                 </a>
             }
             else
             {
                 <a class="navbar-brand d-flex align-items-center" asp-controller="Auth" asp-action="Login">
-                    <i class="bi bi-mortarboard-fill fs-4 me-2"></i>
-                    <span class="fw-bold">Lisansüstü Ders Platformu</span>
+                    <img src="~/images.png" alt="MTÜ Dersleri Platformu" height="50" class="me-3" style="background: white; padding: 5px; border-radius: 8px;" />
+                    <div class="d-flex flex-column">
+                        <span class="fw-bold" style="font-size: 1.1rem; line-height: 1.2;">MTÜ Dersleri Platformu</span>
+                        <small style="font-size: 0.75rem; opacity: 0.9;">Malatya Turgut Özal Üniversitesi</small>
+                    </div>
                 </a>
             }
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -39,42 +45,6 @@
                                 <i class="bi bi-house-door"></i> Ana Sayfa
                             </a>
                         </li>
-                        <li class="nav-item position-static" id="institutionsDropdown">
-                            <a class="nav-link" href="#" id="institutionsToggle">
-                                <i class="bi bi-building"></i> Kurumlar <i class="bi bi-chevron-down ms-1"></i>
-                            </a>
-                            <div class="mega-menu-container" id="institutionsMegaMenu" style="display: none;">
-                                <div class="mega-menu-content">
-                                    <div class="d-flex">
-                                        <div class="institutions-list border-end" style="width: 350px; max-height: 500px; overflow-y: auto;">
-                                            <div class="p-3 text-center">
-                                                <div class="spinner-border spinner-border-sm text-primary" role="status">
-                                                    <span class="visually-hidden">Yükleniyor...</span>
-                                                </div>
-                                                <span class="ms-2">Kurumlar yükleniyor...</span>
-                                            </div>
-                                        </div>
-                                        <div class="faculties-list" style="width: 350px; max-height: 500px; overflow-y: auto;">
-                                            <div class="p-4 text-center text-muted">
-                                                <i class="bi bi-arrow-left-circle fs-3 d-block mb-2"></i>
-                                                <small>Bir kurum seçin</small>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </li>
-                        @{
-                            var userRole = User.Claims.FirstOrDefault(c => c.Type == "Role")?.Value;
-                        }
-                        @if (userRole == "Admin")
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Home" asp-action="Instructors">
-                                    <i class="bi bi-person-badge"></i> Akademisyenler
-                                </a>
-                            </li>
-                        }
                     </ul>
                 }
 
@@ -184,8 +154,11 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-6">
-                    <h5><i class="bi bi-mortarboard-fill me-2"></i>Lisansüstü Ders Platformu</h5>
-                    <p class="text-white-50">Akademisyenlerin lisansüstü ders materyallerini öğrencilerle paylaşabileceği modern platform</p>
+                    <div class="d-flex align-items-center mb-3">
+                        <img src="~/images.png" alt="MTÜ" height="40" class="me-3" style="background: white; padding: 5px; border-radius: 8px;" />
+                        <h5 class="mb-0">MTÜ Dersleri Platformu</h5>
+                    </div>
+                    <p class="text-white-50">Malatya Turgut Özal Üniversitesi - Lisansüstü Eğitim Enstitüsü</p>
                 </div>
                 <div class="col-md-3">
                     <h6>Hızlı Linkler</h6>
@@ -197,13 +170,13 @@
                 </div>
                 <div class="col-md-3">
                     <h6>İletişim</h6>
-                    <p class="text-white-50 small mb-1"><i class="bi bi-envelope me-2"></i>info@university.edu</p>
-                    <p class="text-white-50 small mb-1"><i class="bi bi-telephone me-2"></i>+90 (212) 123 45 67</p>
+                    <p class="text-white-50 small mb-1"><i class="bi bi-envelope me-2"></i>lisansustu@ozal.edu.tr</p>
+                    <p class="text-white-50 small mb-1"><i class="bi bi-telephone me-2"></i>+90 (422) 321 17 17</p>
                 </div>
             </div>
             <hr class="bg-white-50">
             <div class="text-center text-white-50 small">
-                &copy; @DateTime.Now.Year Lisansüstü Ders Platformu. Tüm hakları saklıdır.
+                &copy; @DateTime.Now.Year MTÜ Dersleri Platformu - Malatya Turgut Özal Üniversitesi. Tüm hakları saklıdır.
             </div>
         </div>
     </footer>
