@@ -14,8 +14,29 @@
 
     <div class="card">
         <div class="card-body">
+            <!-- Arama ve Filtre -->
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <input type="text" id="searchInput" class="form-control" placeholder="Kullanıcı ara (ad, email, kullanıcı adı)...">
+                </div>
+                <div class="col-md-3">
+                    <select id="roleFilter" class="form-select">
+                        <option value="">Tüm Roller</option>
+                        <option value="Admin">Admin</option>
+                        <option value="Akademisyen">Akademisyen</option>
+                        <option value="Öğrenci">Öğrenci</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select id="statusFilter" class="form-select">
+                        <option value="">Tüm Durumlar</option>
+                        <option value="Aktif">Aktif</option>
+                        <option value="Pasif">Pasif</option>
+                    </select>
+                </div>
+            </div>
             <div class="table-responsive">
-                <table class="table table-hover">
+                <table class="table table-hover" id="usersTable">
                     <thead>
                         <tr>
                             <th>Kullanıcı Adı</th>
@@ -38,6 +59,10 @@
                                     @if (user.Instructor != null)
                                     {
                                         <br><small class="text-muted">@user.Instructor.Title</small>
+                                        @if (!user.Instructor.IsActive)
+                                        {
+                                            <br><span class="badge bg-warning text-dark">Pasif Akademisyen</span>
+                                        }
                                     }
                                 </td>
                                 <td>@user.Email</td>
@@ -97,10 +122,45 @@
 @section Scripts {
 <script>
     function confirmDelete(id, name) {
-        if (confirm('"{name}" adlı akademisyeni silmek istediğinize emin misiniz? Bu işlem geri alınamaz!')) {
+        if (confirm(`"${name}" adlı akademisyeni silmek istediğinize emin misiniz? Bu işlem geri alınamaz!`)) {
             document.getElementById('deleteId').value = id;
             document.getElementById('deleteForm').submit();
         }
     }
+
+    // Arama ve filtreleme fonksiyonu
+    function filterTable() {
+        const searchValue = document.getElementById('searchInput').value.toLowerCase();
+        const roleFilter = document.getElementById('roleFilter').value;
+        const statusFilter = document.getElementById('statusFilter').value;
+        const table = document.getElementById('usersTable');
+        const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+
+        for (let i = 0; i < rows.length; i++) {
+            const row = rows[i];
+            const userName = row.cells[0].textContent.toLowerCase();
+            const fullName = row.cells[1].textContent.toLowerCase();
+            const email = row.cells[2].textContent.toLowerCase();
+            const role = row.cells[3].textContent.trim();
+            const status = row.cells[4].textContent.trim();
+
+            const matchesSearch = userName.includes(searchValue) ||
+                                fullName.includes(searchValue) ||
+                                email.includes(searchValue);
+            const matchesRole = !roleFilter || role === roleFilter;
+            const matchesStatus = !statusFilter || status === statusFilter;
+
+            if (matchesSearch && matchesRole && matchesStatus) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        }
+    }
+
+    // Event listener'ları ekle
+    document.getElementById('searchInput').addEventListener('keyup', filterTable);
+    document.getElementById('roleFilter').addEventListener('change', filterTable);
+    document.getElementById('statusFilter').addEventListener('change', filterTable);
 </script>
 }

@@ -267,7 +267,7 @@ namespace DersSunumSistemi.Controllers
             }
 
             var instructorName = course.Instructor?.FullName ?? "Bilinmeyen";
-            course.InstructorId = 0; // Akademisyenden ayır
+            course.InstructorId = null; // Akademisyenden ayır (null olarak ayarla)
             course.UpdatedDate = DateTime.Now;
             await _context.SaveChangesAsync();
 

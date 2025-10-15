@@ -18,8 +18,8 @@ namespace DersSunumSistemi.Models
         public int CategoryId { get; set; }
         public Category? Category { get; set; }
 
-        // Hangi akademisyene ait
-        public int InstructorId { get; set; }
+        // Hangi akademisyene ait (nullable - ders henüz atanmamış olabilir)
+        public int? InstructorId { get; set; }
         public Instructor? Instructor { get; set; }
 
         // Hangi bölüme ait

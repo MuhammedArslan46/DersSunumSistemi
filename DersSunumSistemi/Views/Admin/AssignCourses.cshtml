@@ -36,68 +36,91 @@
         <div class="col-lg-6 mb-4">
             <div class="card shadow-sm">
                 <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0"><i class="bi bi-person-badge"></i> Akademisyenler ve Dersleri</h5>
+                    <h5 class="mb-0">
+                        <i class="bi bi-person-badge"></i> Akademisyenler ve Dersleri
+                        @if (instructors != null)
+                        {
+                            <span class="badge bg-light text-dark ms-2">@instructors.Count akademisyen</span>
+                        }
+                    </h5>
                 </div>
                 <div class="card-body">
                     @if (instructors != null && instructors.Any())
                     {
-                        <div class="accordion" id="instructorAccordion">
-                            @foreach (var instructor in instructors)
-                            {
-                                var assignedCourses = courses?.Where(c => c.InstructorId == instructor.Id).ToList() ?? new List<DersSunumSistemi.Models.Course>();
-                                <div class="accordion-item">
-                                    <h2 class="accordion-header" id="heading-@instructor.Id">
-                                        <button class="accordion-button @(assignedCourses.Any() ? "" : "collapsed")" type="button"
-                                                data-bs-toggle="collapse" data-bs-target="#collapse-@instructor.Id">
-                                            <div class="d-flex justify-content-between align-items-center w-100 me-3">
-                                                <div>
-                                                    <strong>@instructor.FullName</strong>
-                                                    @if (!string.IsNullOrEmpty(instructor.Title))
-                                                    {
-                                                        <span class="text-muted"> - @instructor.Title</span>
-                                                    }
+                        <div class="mb-3">
+                            <input type="text" id="instructorSearch" class="form-control" placeholder="Akademisyen ara...">
+                        </div>
+                        <div style="max-height: 600px; overflow-y: auto;">
+                            <div class="accordion" id="instructorAccordion">
+                                @foreach (var instructor in instructors)
+                                {
+                                    var assignedCourses = courses?.Where(c => c.InstructorId == instructor.Id).ToList() ?? new List<DersSunumSistemi.Models.Course>();
+                                    <div class="accordion-item instructor-item">
+                                        <h2 class="accordion-header" id="heading-@instructor.Id">
+                                            <button class="accordion-button @(assignedCourses.Any() ? "" : "collapsed")" type="button"
+                                                    data-bs-toggle="collapse" data-bs-target="#collapse-@instructor.Id">
+                                                <div class="d-flex justify-content-between align-items-center w-100 me-3">
+                                                    <div>
+                                                        <strong>@instructor.FullName</strong>
+                                                        @if (!string.IsNullOrEmpty(instructor.Title))
+                                                        {
+                                                            <span class="text-muted"> - @instructor.Title</span>
+                                                        }
+                                                        @if (instructor.Department != null)
+                                                        {
+                                                            <br><small class="text-muted">@instructor.Department.Name</small>
+                                                        }
+                                                    </div>
+                                                    <span class="badge @(assignedCourses.Any() ? "bg-success" : "bg-secondary") rounded-pill">
+                                                        @assignedCourses.Count ders
+                                                    </span>
                                                 </div>
-                                                <span class="badge bg-primary rounded-pill">@assignedCourses.Count ders</span>
+                                            </button>
+                                        </h2>
+                                        <div id="collapse-@instructor.Id" class="accordion-collapse collapse @(assignedCourses.Any() ? "show" : "")"
+                                             data-bs-parent="#instructorAccordion">
+                                            <div class="accordion-body">
+                                                @if (assignedCourses.Any())
+                                                {
+                                                    <ul class="list-group">
+                                                        @foreach (var course in assignedCourses)
+                                                        {
+                                                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                                <div>
+                                                                    <strong>@course.Code</strong> - @course.Name
+                                                                    <br><small class="text-muted">@course.Category?.Name</small>
+                                                                </div>
+                                                                <form method="post" asp-action="UnassignCourse" class="d-inline">
+                                                                    <input type="hidden" name="courseId" value="@course.Id" />
+                                                                    <button type="submit" class="btn btn-sm btn-danger"
+                                                                            onclick="return confirm('Bu dersi akademisyenden kaldırmak istediğinize emin misiniz?')">
+                                                                        <i class="bi bi-x-circle"></i> Kaldır
+                                                                    </button>
+                                                                </form>
+                                                            </li>
+                                                        }
+                                                    </ul>
+                                                }
+                                                else
+                                                {
+                                                    <div class="alert alert-info mb-0">
+                                                        <i class="bi bi-info-circle"></i> Bu akademisyene henüz ders atanmamış.
+                                                    </div>
+                                                }
                                             </div>
-                                        </button>
-                                    </h2>
-                                    <div id="collapse-@instructor.Id" class="accordion-collapse collapse @(assignedCourses.Any() ? "show" : "")"
-                                         data-bs-parent="#instructorAccordion">
-                                        <div class="accordion-body">
-                                            @if (assignedCourses.Any())
-                                            {
-                                                <ul class="list-group">
-                                                    @foreach (var course in assignedCourses)
-                                                    {
-                                                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                                                            <div>
-                                                                <strong>@course.Code</strong> - @course.Name
-                                                                <br><small class="text-muted">@course.Category?.Name</small>
-                                                            </div>
-                                                            <form method="post" asp-action="UnassignCourse" class="d-inline">
-                                                                <input type="hidden" name="courseId" value="@course.Id" />
-                                                                <button type="submit" class="btn btn-sm btn-danger"
-                                                                        onclick="return confirm('Bu dersi akademisyenden kaldırmak istediğinize emin misiniz?')">
-                                                                    <i class="bi bi-x-circle"></i> Kaldır
-                                                                </button>
-                                                            </form>
-                                                        </li>
-                                                    }
-                                                </ul>
-                                            }
-                                            else
-                                            {
-                                                <p class="text-muted mb-0"><i class="bi bi-info-circle"></i> Bu akademisyene henüz ders atanmamış.</p>
-                                            }
                                         </div>
                                     </div>
-                                </div>
-                            }
+                                }
+                            </div>
                         </div>
                     }
                     else
                     {
-                        <p class="text-muted"><i class="bi bi-info-circle"></i> Aktif akademisyen bulunamadı.</p>
+                        <div class="alert alert-warning">
+                            <i class="bi bi-exclamation-triangle"></i>
+                            <strong>Aktif akademisyen bulunamadı!</strong>
+                            <br>Önce akademisyen ekleyin ve aktif duruma getirin.
+                        </div>
                     }
                 </div>
             </div>
@@ -181,6 +204,21 @@
 </div>
 
 <script>
+    // Akademisyen arama fonksiyonu
+    document.getElementById('instructorSearch')?.addEventListener('keyup', function() {
+        const searchValue = this.value.toLowerCase();
+        const instructorItems = document.querySelectorAll('.instructor-item');
+
+        instructorItems.forEach(item => {
+            const text = item.textContent.toLowerCase();
+            if (text.includes(searchValue)) {
+                item.style.display = '';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    });
+
     // Ders arama fonksiyonu
     document.getElementById('courseSearch')?.addEventListener('keyup', function() {
         const searchValue = this.value.toLowerCase();

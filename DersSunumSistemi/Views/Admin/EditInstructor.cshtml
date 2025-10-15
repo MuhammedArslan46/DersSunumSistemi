@@ -58,11 +58,13 @@
                         <div class="mb-3">
                             <label class="form-label">Durum</label>
                             <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" id="isActive" name="isActive" @(Model.IsActive ? "checked" : "")>
+                                <input class="form-check-input" type="checkbox" id="isActive" name="isActive" value="true" @(Model.IsActive ? "checked" : "")>
+                                <input type="hidden" name="isActive" value="false">
                                 <label class="form-check-label" for="isActive">
-                                    Aktif
+                                    <strong id="statusLabel">@(Model.IsActive ? "Aktif" : "Pasif")</strong>
                                 </label>
                             </div>
+                            <small class="text-muted">Pasif akademisyenler ders ataması alamaz</small>
                         </div>
 
                         <div class="row">
@@ -98,3 +100,31 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+<script>
+    // Aktif/Pasif durumu değiştiğinde label'ı güncelle
+    document.getElementById('isActive').addEventListener('change', function() {
+        const label = document.getElementById('statusLabel');
+        if (this.checked) {
+            label.textContent = 'Aktif';
+            label.className = 'text-success';
+        } else {
+            label.textContent = 'Pasif';
+            label.className = 'text-danger';
+        }
+    });
+
+    // Sayfa yüklendiğinde label rengini ayarla
+    document.addEventListener('DOMContentLoaded', function() {
+        const checkbox = document.getElementById('isActive');
+        const label = document.getElementById('statusLabel');
+        if (checkbox.checked) {
+            label.className = 'text-success';
+        } else {
+            label.className = 'text-danger';
+        }
+    });
+</script>
+}
+
