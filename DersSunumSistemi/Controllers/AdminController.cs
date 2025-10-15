@@ -178,22 +178,51 @@ namespace DersSunumSistemi.Controllers
         {
             var departments = await _context.Departments
                 .Include(d => d.Instructors)
+                .Include(d => d.Faculty)
+                    .ThenInclude(f => f.Institution)
+                .Include(d => d.Courses)
+                .OrderBy(d => d.Name)
                 .ToListAsync();
 
             return View(departments);
         }
 
         [HttpGet]
-        public IActionResult CreateDepartment()
+        public async Task<IActionResult> CreateDepartment()
         {
+            ViewBag.Faculties = await _context.Faculties
+                .Include(f => f.Institution)
+                .OrderBy(f => f.Name)
+                .ToListAsync();
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateDepartment(Department model)
+        public async Task<IActionResult> CreateDepartment(string name, string code, string? description, int facultyId)
         {
-            _context.Departments.Add(model);
+            var faculty = await _context.Faculties.FindAsync(facultyId);
+            if (faculty == null)
+            {
+                TempData["Error"] = "Geçersiz fakülte seçimi!";
+                ViewBag.Faculties = await _context.Faculties
+                    .Include(f => f.Institution)
+                    .OrderBy(f => f.Name)
+                    .ToListAsync();
+                return View();
+            }
+
+            var department = new Department
+            {
+                Name = name,
+                Code = code,
+                Description = description,
+                FacultyId = facultyId
+            };
+
+            _context.Departments.Add(department);
             await _context.SaveChangesAsync();
+
+            TempData["Success"] = $"{name} bölümü başarıyla eklendi!";
             return RedirectToAction(nameof(Departments));
         }
 
